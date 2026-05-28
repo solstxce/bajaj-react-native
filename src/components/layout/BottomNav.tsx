@@ -21,10 +21,41 @@ export function BottomNav({ pages, activePage, onPage }: { pages: RolePage[]; ac
 }
 
 const styles = StyleSheet.create({
-  bottomNav: { position: "absolute", bottom: 0, left: 0, right: 0, borderTopWidth: 1, borderTopColor: theme.line, backgroundColor: "#fff", paddingHorizontal: 10, paddingVertical: 8 },
-  navRow: { gap: 8 },
-  item: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, borderWidth: 1, borderColor: theme.line, backgroundColor: "#fff" },
-  itemActive: { backgroundColor: theme.navy, borderColor: theme.navy },
-  text: { color: theme.ink, fontSize: 12, fontWeight: "700" },
-  textActive: { color: "#fff" },
+  bottomNav: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: theme.card,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderTopWidth: 1,
+    borderTopColor: theme.line,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: -2 },
+    elevation: 6,
+  },
+  navRow: { flexDirection: "row", gap: 10, alignItems: "center" },
+  item: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 18,
+    backgroundColor: theme.bg,
+  },
+  itemActive: {
+    backgroundColor: theme.primary,
+  },
+  text: {
+    color: theme.secondary,
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  textActive: {
+    color: "#fff",
+  },
 });

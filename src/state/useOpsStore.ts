@@ -64,5 +64,6 @@ export function useOpsStore() {
     decideApproval: (id: number, status: "approved" | "rejected") =>
       setApprovals((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a))),
     toggleNotification: (id: number) => setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: !n.read } : n))),
+    bookmarkNotification: (id: number) => setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, bookmarked: !n.bookmarked } : n))),
   };
 }

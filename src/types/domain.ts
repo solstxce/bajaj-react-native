@@ -16,4 +16,15 @@ export type Branch = { id: number; code: string; name: string; city: string; hea
 export type Task = { id: number; title: string; branchId: number; assigneeRole: RoleId; done: boolean; priority: Priority; due: string };
 export type Complaint = { id: number; title: string; branchId: number; status: "active" | "resolved" | "escalated"; severity: Priority };
 export type Approval = { id: number; label: string; branchId: number; status: "pending" | "approved" | "rejected"; amount: number };
-export type Notice = { id: number; title: string; branchId: number; type: "info" | "warning"; read: boolean };
+export type NoticePriority = "high" | "medium" | "low";
+export type Notice = {
+  id: number;
+  title: string;
+  description: string;
+  branchId: number;
+  type: "info" | "warning" | "critical" | "task" | "escalation";
+  priority: NoticePriority;
+  read: boolean;
+  bookmarked: boolean;
+  timestamp: string;
+};

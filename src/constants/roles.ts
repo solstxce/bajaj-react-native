@@ -12,7 +12,6 @@ export const ROLES: Record<RoleId, RoleDef> = {
       { id: "complaints", label: "Complaint", emoji: "🧰" },
       { id: "attendance", label: "Attendance", emoji: "📍" },
       { id: "notifications", label: "Alerts", emoji: "🔔" },
-      { id: "profile", label: "Profile", emoji: "👤" },
     ],
   },
   employee: {
@@ -26,7 +25,6 @@ export const ROLES: Record<RoleId, RoleDef> = {
       { id: "complaints", label: "Issues", emoji: "⚠️" },
       { id: "attendance", label: "Attendance", emoji: "📍" },
       { id: "notifications", label: "Alerts", emoji: "🔔" },
-      { id: "profile", label: "Profile", emoji: "👤" },
     ],
   },
   am: {
@@ -41,7 +39,6 @@ export const ROLES: Record<RoleId, RoleDef> = {
       { id: "branch", label: "Branch", emoji: "🏢" },
       { id: "attendance", label: "Attendance", emoji: "👥" },
       { id: "notifications", label: "Alerts", emoji: "🔔" },
-      { id: "profile", label: "Profile", emoji: "👤" },
     ],
   },
   branchManager: {
@@ -57,7 +54,6 @@ export const ROLES: Record<RoleId, RoleDef> = {
       { id: "approvals", label: "Approvals", emoji: "🧾" },
       { id: "visits", label: "Visits", emoji: "🛣️" },
       { id: "notifications", label: "Alerts", emoji: "🔔" },
-      { id: "profile", label: "Profile", emoji: "👤" },
     ],
   },
   rm: {
@@ -75,7 +71,6 @@ export const ROLES: Record<RoleId, RoleDef> = {
       { id: "users", label: "Users", emoji: "🧑‍🤝‍🧑" },
       { id: "settings", label: "Settings", emoji: "⚙️" },
       { id: "notifications", label: "Alerts", emoji: "🔔" },
-      { id: "profile", label: "Profile", emoji: "👤" },
     ],
   },
 };
