@@ -1,0 +1,46 @@
+import React, { useEffect, useRef } from "react";
+import { Animated, Text, Platform } from "react-native";
+import { useApp } from "../../context/AppContext";
+import { colors, fontSize, shadows } from "../../theme/theme";
+
+export function Toast() {
+  const { state } = useApp();
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(-12)).current;
+
+  useEffect(() => {
+    if (state.toast) {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 0, duration: 200, useNativeDriver: true }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 0, duration: 180, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: -12, duration: 180, useNativeDriver: true }),
+      ]).start();
+    }
+  }, [state.toast]);
+
+  if (!state.toast) return null;
+
+  return (
+    <Animated.View
+      style={{
+        position: "absolute",
+        top: Platform.OS === "ios" ? 54 : 44,
+        right: 16,
+        zIndex: 60,
+        borderRadius: 14,
+        backgroundColor: colors.text,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        opacity,
+        transform: [{ translateY }],
+        ...shadows.modal,
+      }}
+    >
+      <Text style={{ fontSize: fontSize.sm, fontWeight: "500", color: colors.white }}>{state.toast}</Text>
+    </Animated.View>
+  );
+}

@@ -1,19 +1,213 @@
 export type RoleId = "worker" | "employee" | "am" | "branchManager" | "rm";
 
-export type Priority = "low" | "medium" | "high" | "critical";
+export type Priority = "Critical" | "High" | "Medium" | "Low";
 
-export type RolePage = { id: string; label: string; emoji: string };
+export type TaskStatus = "Pending" | "In Progress" | "Completed" | "Revoked";
+
+export type ComplaintStatus = "Pending" | "Escalated" | "Resolved";
+
+export type ApprovalStatus = "Pending" | "Approved" | "Rejected";
+
+export type ApplianceStatus = "Operational" | "At Risk" | "Critical" | "Down";
+
+export type VisitStatus = "Scheduled" | "Escalated" | "Completed";
+
+export type AttStatus = "Present" | "Late" | "Absent";
+
+export type RolePage = {
+  id: string;
+  label: string;
+  icon: string;
+};
 
 export type RoleDef = {
   id: RoleId;
   name: string;
   short: string;
+  icon: string;
   hierarchy: string;
+  accent: string;
   pages: RolePage[];
 };
 
-export type Branch = { id: number; code: string; name: string; city: string; health: number; attendance: number };
-export type Task = { id: number; title: string; branchId: number; assigneeRole: RoleId; done: boolean; priority: Priority; due: string };
-export type Complaint = { id: number; title: string; branchId: number; status: "active" | "resolved" | "escalated"; severity: Priority };
-export type Approval = { id: number; label: string; branchId: number; status: "pending" | "approved" | "rejected"; amount: number };
-export type Notice = { id: number; title: string; branchId: number; type: "info" | "warning"; read: boolean };
+export type Branch = {
+  id: number;
+  code: string;
+  name: string;
+  city: string;
+  address: string;
+  managerId: number;
+  assistantManagerId: number;
+  phone: string;
+  email: string;
+  geoRadius: number;
+  shiftWindow: string;
+  health: number;
+  performance: number;
+  todayAttendance: number;
+  staffCount: number;
+  workerCount: number;
+  employeeCount: number;
+  monthlyBudget: number;
+  usedBudget: number;
+  openIssues: number;
+  criticalAlerts: number;
+  applianceRisk: number;
+  auditScore: number;
+  lastVisit: string;
+  nextVisit: string;
+  revenueIndex: number;
+  customerFootfall: number;
+  sla: number;
+};
+
+export type User = {
+  id: number;
+  name: string;
+  role: RoleId;
+  branchId: number;
+  branchScope?: number[];
+  position: string;
+  phone: string;
+  email: string;
+  shift: string;
+  joinDate: string;
+  status: string;
+  rating: number;
+  attendancePct: number;
+  tasksClosed: number;
+  proofRate: number;
+  escalations: number;
+  managerId: number | null;
+  salary: number;
+  lastCheckIn: string;
+  skills: string[];
+  emergencyContact: string;
+  documents: string[];
+  deviceId: string;
+};
+
+export type Task = {
+  id: number;
+  title: string;
+  branchId: number;
+  audience: RoleId;
+  schedule: string;
+  priority: Priority;
+  zone: string;
+  deadline: string;
+  assignedTo: number | null;
+  assignedBy: number;
+  status: TaskStatus;
+  checklistDone: number;
+  checklistTotal: number;
+  proofRequired: boolean;
+  completedBy: number | null;
+  completedAt: string | null;
+  notes: string;
+  escalation: string;
+  proofLabel: string;
+  redoReason: string | null;
+};
+
+export type Complaint = {
+  id: number;
+  title: string;
+  branchId: number;
+  type: string;
+  priority: Priority;
+  status: ComplaintStatus;
+  reportedBy: number;
+  assignedVendor: string;
+  assetId: number | null;
+  estimatedCost: number;
+  impact: string;
+  createdAt: string;
+  description: string;
+  escalationStage: string;
+  timeline: string[];
+};
+
+export type Appliance = {
+  id: number;
+  branchId: number;
+  name: string;
+  category: string;
+  zone: string;
+  brand: string;
+  model: string;
+  serial: string;
+  healthScore: number;
+  status: ApplianceStatus;
+  purchaseDate: string;
+  lastService: string;
+  nextService: string;
+  warranty: string;
+  amcVendor: string;
+  purchaseCost: number;
+  approvalStatus: string;
+  pendingParts: string;
+};
+
+export type Approval = {
+  id: number;
+  title: string;
+  kind: string;
+  branchId: number;
+  amount: number;
+  requestedBy: number;
+  status: ApprovalStatus;
+  stage: string;
+  priority: Priority;
+  age: string;
+  note: string;
+};
+
+export type Visit = {
+  id: number;
+  branchId: number;
+  managerId: number;
+  scheduledAt: string;
+  purpose: string;
+  agenda: string;
+  status: VisitStatus;
+  report: string;
+};
+
+export type NotificationItem = {
+  id: number;
+  title: string;
+  detail: string;
+  scope: RoleId[];
+  branchId: number;
+  priority: Priority;
+  read: boolean;
+  bookmarked: boolean;
+  time: string;
+};
+
+export type AttendanceLog = {
+  id: number;
+  userId: number;
+  date: string;
+  status: AttStatus;
+  checkIn: string;
+  location: string;
+  proof: string;
+  deviation: string;
+};
+
+export type TabState = {
+  workerTasks: string;
+  employeeTasks: string;
+  amTasks: string;
+  amBranch: string;
+  managerMonitoring: string;
+  managerIssues: string;
+  approvals: string;
+  notifications: string;
+  complaints: string;
+  rmAlerts: string;
+  rmIntelligence: string;
+  rmUsers: string;
+};

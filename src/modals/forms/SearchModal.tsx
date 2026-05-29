@@ -1,0 +1,147 @@
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Animated } from "react-native";
+import { Search, X, Home, ListChecks, Wrench, MapPin, Bell, User, Building, DollarSign, Activity, FileText, Clock, ChevronRight } from "lucide-react-native";
+import { useApp } from "../../context/AppContext";
+import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
+import { Badge } from "../../shared/components/Badge";
+import { Task, Complaint, Branch, User as UserType, Approval, Visit, NotificationItem } from "../../types/domain";
+
+interface Props {
+  visible: boolean;
+  onClose: () => void;
+  onSelectResult: (entityType: string, entityId: number) => void;
+}
+
+export function SearchModal({ visible, onClose, onSelectResult }: Props) {
+  const { tasks, complaints, users, branches, approvals, visits, getBranch } = useApp();
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<TextInput>(null);
+  const translateY = useRef(new Animated.Value(18)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.spring(translateY, { toValue: 0, damping: 20, stiffness: 200, useNativeDriver: true }),
+      ]).start();
+      setTimeout(() => inputRef.current?.focus(), 250);
+    } else {
+      translateY.setValue(18);
+      opacity.setValue(0);
+      setQuery("");
+    }
+  }, [visible]);
+
+  const q = query.toLowerCase().trim();
+
+  const tasksFiltered = q.length > 0 ? tasks.filter(t => t.title.toLowerCase().includes(q) || (getBranch(t.branchId)?.name || "").toLowerCase().includes(q)) : [];
+  const complaintsFiltered = q.length > 0 ? complaints.filter(c => c.title.toLowerCase().includes(q) || c.type.toLowerCase().includes(q)) : [];
+  const usersFiltered = q.length > 0 ? users.filter(u => u.name.toLowerCase().includes(q) || u.position.toLowerCase().includes(q) || u.role.includes(q)) : [];
+  const branchesFiltered = q.length > 0 ? branches.filter(b => b.name.toLowerCase().includes(q) || b.code.toLowerCase().includes(q) || b.city.toLowerCase().includes(q)) : [];
+  const approvalsFiltered = q.length > 0 ? approvals.filter(a => a.title.toLowerCase().includes(q) || a.note.toLowerCase().includes(q)) : [];
+  const visitsFiltered = q.length > 0 ? visits.filter(v => v.purpose.toLowerCase().includes(q) || v.agenda.toLowerCase().includes(q)) : [];
+
+  const results = { tasks: tasksFiltered, complaints: complaintsFiltered, users: usersFiltered, branches: branchesFiltered, approvals: approvalsFiltered, visits: visitsFiltered };
+  const total = tasksFiltered.length + complaintsFiltered.length + usersFiltered.length + branchesFiltered.length + approvalsFiltered.length + visitsFiltered.length;
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableOpacity activeOpacity={1} onPress={onClose} style={{ flex: 1, backgroundColor: "rgba(15,23,42,0.5)", justifyContent: "flex-start", paddingTop: 80, paddingHorizontal: spacing.xl }}>
+        <Animated.View style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], opacity, transform: [{ translateY }], ...shadows.modal }}>
+          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border }}>
+              <Search size={16} color={colors.textSecondary} strokeWidth={1.8} />
+              <TextInput
+                ref={inputRef}
+                value={query}
+                onChangeText={setQuery}
+                placeholder="Search tasks, complaints, people, branches..."
+                placeholderTextColor={colors.textSecondary}
+                style={{ flex: 1, fontSize: fontSize.md, color: colors.text }}
+              />
+              {query.length > 0 ? (
+                <TouchableOpacity onPress={() => setQuery("")} style={{ padding: spacing.xs }}>
+                  <X size={14} color={colors.textSecondary} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+            {q.length > 0 ? (
+              <ScrollView style={{ maxHeight: 400 }} contentContainerStyle={{ padding: spacing.sm }}>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}>{total} results</Text>
+                {renderGroup("Tasks", results.tasks, "task", colors.brand, onSelectResult, onClose, id => {
+                  const t = tasks.find(t => t.id === id);
+                  return t ? { title: t.title, subtitle: getBranch(t.branchId)?.name + " | " + t.status, badge: t.priority } : undefined;
+                })}
+                {renderGroup("Complaints", results.complaints, "complaint", colors.error, onSelectResult, onClose, id => {
+                  const c = complaints.find(c => c.id === id);
+                  return c ? { title: c.title, subtitle: c.type + " | " + c.status, badge: c.priority } : undefined;
+                })}
+                {renderGroup("People", results.users, "user", colors.brandSecondary, onSelectResult, onClose, id => {
+                  const u = users.find(u => u.id === id);
+                  return u ? { title: u.name, subtitle: u.position + " — " + (getBranch(u.branchId)?.name || ""), badge: u.role } : undefined;
+                })}
+                {renderGroup("Branches", results.branches, "branch", colors.success, onSelectResult, onClose, id => {
+                  const b = branches.find(b => b.id === id);
+                  return b ? { title: b.name, subtitle: b.code + " | " + b.city, badge: b.health + "%" } : undefined;
+                })}
+                {renderGroup("Approvals", results.approvals, "approval", colors.warning, onSelectResult, onClose, id => {
+                  const a = approvals.find(a => a.id === id);
+                  return a ? { title: a.title, subtitle: a.kind + " | " + a.stage, badge: a.status } : undefined;
+                })}
+                {renderGroup("Visits", results.visits, "visit", colors.info, onSelectResult, onClose, id => {
+                  const v = visits.find(v => v.id === id);
+                  return v ? { title: v.purpose, subtitle: (getBranch(v.branchId)?.name || "") + " | " + v.scheduledAt, badge: v.status } : undefined;
+                })}
+              </ScrollView>
+            ) : null}
+          </TouchableOpacity>
+        </Animated.View>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+interface ResultItem {
+  title: string;
+  subtitle: string;
+  badge: string;
+}
+
+function renderGroup(
+  label: string,
+  items: any[],
+  entityType: string,
+  accentColor: string,
+  onSelect: (entityType: string, entityId: number) => void,
+  onClose: () => void,
+  getItem: (id: number) => ResultItem | undefined,
+) {
+  if (items.length === 0) return null;
+  return (
+    <View style={{ marginBottom: spacing.sm }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}>
+        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: accentColor }} />
+        <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{label} ({items.length})</Text>
+      </View>
+      {items.slice(0, 5).map((item: any) => {
+        const data = getItem(item.id);
+        if (!data) return null;
+        return (
+          <TouchableOpacity
+            key={entityType + "-" + item.id}
+            onPress={() => { onSelect(entityType, item.id); onClose(); }}
+            style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.md, paddingVertical: spacing.lg, borderRadius: borderRadius["2xl"], gap: spacing.sm }}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }} numberOfLines={1}>{data.title}</Text>
+              <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }} numberOfLines={1}>{data.subtitle}</Text>
+            </View>
+            <Badge label={data.badge} type={data.badge} />
+            <ChevronRight size={14} color={colors.textSecondary} />
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
