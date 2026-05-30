@@ -10,7 +10,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function RmProfileScreen() {
-  const { currentUser, branches, showToast } = useApp();
+  const { currentUser, branches, showToast, openAuditTrail } = useApp();
   const initials = currentUser.name.split(" ").map((n) => n[0]).join("");
 
   const detailRows = [
@@ -127,6 +127,17 @@ export function RmProfileScreen() {
           ))}
         </View>
       </Card>
+
+      <TouchableOpacity onPress={openAuditTrail} style={{ backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.xl, marginTop: spacing.xl }}>
+        <View style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
+          <FileText size={16} color={colors.brand} strokeWidth={2} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>Open audit trail</Text>
+          <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Review all actions across your region</Text>
+        </View>
+        <ChevronRight size={16} color={colors.textSecondary} strokeWidth={2} />
+      </TouchableOpacity>
     </ScreenWrapper>
   );
 }

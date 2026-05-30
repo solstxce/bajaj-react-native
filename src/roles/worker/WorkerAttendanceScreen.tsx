@@ -80,10 +80,10 @@ export function WorkerAttendanceScreen() {
                 <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Recent day-wise records</Text>
               </View>
               <View style={{ gap: spacing.sm }}>
-                {["2026-04-26", "2026-04-25", "2026-04-24", "2026-04-23"].map((date) => (
-                  <View key={date} style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{date}</Text>
-                    <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{date === "2026-04-26" ? (entry?.status || "Pending") : "Present - 08:5" + Math.floor(Math.random() * 9 + 8)}</Text>
+                {attendanceLog.filter((r) => r.userId === currentUser.id).slice(-4).reverse().map((record) => (
+                  <View key={record.id} style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{record.date}</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{record.status} - {record.checkIn}</Text>
                   </View>
                 ))}
               </View>

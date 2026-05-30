@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, SafeAreaView } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Home, ListChecks, Wrench, MapPin, Bell, IdCard, BarChart3, AlertCircle, Building, LineChart, Stamp, Route, Satellite, TriangleAlert, Wallet, ChartColumn, Users, Sliders, Circle } from "lucide-react-native";
@@ -9,6 +9,8 @@ import { pageIcon } from "../theme/styleMaps";
 import { TopBar } from "../shared/layout/TopBar";
 import { Toast } from "../shared/components/Toast";
 import { RoleSwitcherModal } from "../modals/forms/RoleSwitcherModal";
+import { FormModal } from "../modals/forms/FormModal";
+import { AuditTrailModal } from "../modals/forms/AuditTrailModal";
 import { DetailModal } from "../modals/detail/DetailModal";
 import { SearchModal } from "../modals/forms/SearchModal";
 import { PlaceholderScreen } from "./PlaceholderScreen";
@@ -20,12 +22,6 @@ import { WorkerAttendanceScreen } from "../roles/worker/WorkerAttendanceScreen";
 import { WorkerNotificationsScreen } from "../roles/worker/WorkerNotificationsScreen";
 import { WorkerProfileScreen } from "../roles/worker/WorkerProfileScreen";
 
-import { EmployeeHomeScreen } from "../roles/employee/EmployeeHomeScreen";
-import { EmployeeTasksScreen } from "../roles/employee/EmployeeTasksScreen";
-import { EmployeeComplaintsScreen } from "../roles/employee/EmployeeComplaintsScreen";
-import { EmployeeAttendanceScreen } from "../roles/employee/EmployeeAttendanceScreen";
-import { EmployeeNotificationsScreen } from "../roles/employee/EmployeeNotificationsScreen";
-import { EmployeeProfileScreen } from "../roles/employee/EmployeeProfileScreen";
 
 import { AmHomeScreen } from "../roles/am/AmHomeScreen";
 import { AmTasksScreen } from "../roles/am/AmTasksScreen";
@@ -70,12 +66,6 @@ registerScreen("worker", "attendance", WorkerAttendanceScreen);
 registerScreen("worker", "notifications", WorkerNotificationsScreen);
 registerScreen("worker", "profile", WorkerProfileScreen);
 
-registerScreen("employee", "home", EmployeeHomeScreen);
-registerScreen("employee", "tasks", EmployeeTasksScreen);
-registerScreen("employee", "complaints", EmployeeComplaintsScreen);
-registerScreen("employee", "attendance", EmployeeAttendanceScreen);
-registerScreen("employee", "notifications", EmployeeNotificationsScreen);
-registerScreen("employee", "profile", EmployeeProfileScreen);
 
 registerScreen("am", "home", AmHomeScreen);
 registerScreen("am", "tasks", AmTasksScreen);
@@ -176,8 +166,24 @@ function MainTabs() {
 export function RootNavigator() {
   const [roleModalVisible, setRoleModalVisible] = useState(false);
   const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [formModalVisible, setFormModalVisible] = useState(false);
+  const [auditModalVisible, setAuditModalVisible] = useState(false);
   const [detailModal, setDetailModal] = useState<{ entityType: string; entityId: number } | null>(null);
-  const { setPage, dispatch } = useApp();
+  const { state, setPage, dispatch } = useApp();
+
+  useEffect(() => {
+    const type = state.modalType;
+    if (!type) return;
+    if (type === "form") {
+      setFormModalVisible(true);
+      dispatch({ type: "CLOSE_MODAL" });
+    } else if (type === "audit") {
+      setAuditModalVisible(true);
+      dispatch({ type: "CLOSE_MODAL" });
+    } else if (["task", "complaint", "branch", "user", "appliance", "approval", "visit"].includes(type)) {
+      setDetailModal({ entityType: type, entityId: state.modalData?.id });
+    }
+  }, [state.modalType, state.modalData]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -185,12 +191,15 @@ export function RootNavigator() {
         <TopBar
           onRolePress={() => setRoleModalVisible(true)}
           onSearchPress={() => setSearchModalVisible(true)}
+          onFormPress={() => setFormModalVisible(true)}
           onNotificationPress={() => setPage("notifications")}
           onProfilePress={() => setPage("profile")}
         />
         <MainTabs />
         <Toast />
         <RoleSwitcherModal visible={roleModalVisible} onClose={() => setRoleModalVisible(false)} />
+        <FormModal visible={formModalVisible} onClose={() => setFormModalVisible(false)} />
+        <AuditTrailModal visible={auditModalVisible} onClose={() => setAuditModalVisible(false)} />
         <SearchModal
           visible={searchModalVisible}
           onClose={() => setSearchModalVisible(false)}
@@ -199,7 +208,7 @@ export function RootNavigator() {
         {detailModal ? (
           <DetailModal
             visible={!!detailModal}
-            onClose={() => setDetailModal(null)}
+            onClose={() => { setDetailModal(null); dispatch({ type: "CLOSE_MODAL" }); }}
             entityType={detailModal.entityType}
             entityId={detailModal.entityId}
           />

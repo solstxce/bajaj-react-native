@@ -11,7 +11,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function RmAnalyticsScreen() {
-  const { scopedBranches, setPage } = useApp();
+  const { scopedBranches, openBranchDetail } = useApp();
   const [selectedBranch, setSelectedBranch] = useState<number | null>(null);
   const filtered = selectedBranch ? scopedBranches.filter((b) => b.id === selectedBranch) : scopedBranches;
 
@@ -51,7 +51,7 @@ export function RmAnalyticsScreen() {
         </View>
         <View style={{ gap: spacing.md }}>
           {filtered.map((branch) => (
-            <TouchableOpacity key={branch.id} onPress={() => setPage("intelligence")} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
+            <TouchableOpacity key={branch.id} onPress={() => openBranchDetail(branch.id)} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                   <View style={{ width: 24, height: 24, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>

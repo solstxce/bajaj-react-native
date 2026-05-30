@@ -31,7 +31,6 @@ export function toneClass(type: string) {
 export function roleAccent(role: RoleId): { bg: string; text: string } {
   const map: Record<RoleId, string> = {
     worker: colors.brandSecondary,
-    employee: colors.brand,
     am: colors.success,
     branchManager: colors.brandDeep,
     rm: colors.brand,
@@ -42,7 +41,6 @@ export function roleAccent(role: RoleId): { bg: string; text: string } {
 export function roleIcon(role: RoleId): string {
   const map: Record<RoleId, string> = {
     worker: "HardHat",
-    employee: "UserCheck",
     am: "UserCog",
     branchManager: "Briefcase",
     rm: "Crown",

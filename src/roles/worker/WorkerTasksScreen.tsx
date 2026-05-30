@@ -11,7 +11,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, spacing } from "../../theme/theme";
 
 export function WorkerTasksScreen() {
-  const { state, setTab, currentUser, scopedTasks, showToast, submitTaskProof } = useApp();
+  const { state, setTab, currentUser, scopedTasks, showToast, submitTaskProof, openFormModal } = useApp();
   const filter = state.tabs.workerTasks;
   const list = scopedTasks
     .filter((t) => t.audience === "worker" && (!t.assignedTo || t.assignedTo === currentUser.id))
@@ -28,7 +28,7 @@ export function WorkerTasksScreen() {
               activeKey={filter}
               onChange={(v) => setTab("workerTasks", v)}
             />
-            <QuickButton label="Raise issue" onPress={() => showToast("Issue form coming in Phase 7")} />
+            <QuickButton label="Raise issue" onPress={() => openFormModal("complaint")} />
           </View>
         }
       />

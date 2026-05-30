@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Wallet, TrendingDown, DollarSign, Building, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
@@ -12,7 +12,7 @@ import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 import { formatMoney } from "../../utils/helpers";
 
 export function RmFinanceScreen() {
-  const { scopedBranches, scopedApprovals } = useApp();
+  const { scopedBranches, scopedApprovals, openBranchDetail } = useApp();
   const [selectedBranch, setSelectedBranch] = useState<number | null>(null);
   const filtered = selectedBranch ? scopedBranches.filter((b) => b.id === selectedBranch) : scopedBranches;
 
@@ -26,13 +26,13 @@ export function RmFinanceScreen() {
       <SectionHeader title="Issues & Costs" />
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xl }}>
-        <View style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedBranch ? colors.brand : colors.slate100 }}>
+        <TouchableOpacity onPress={() => setSelectedBranch(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedBranch ? colors.brand : colors.slate100 }}>
           <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: !selectedBranch ? colors.white : colors.textSecondary }}>All</Text>
-        </View>
+        </TouchableOpacity>
         {scopedBranches.map((b) => (
-          <View key={b.id} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedBranch === b.id ? colors.brand : colors.slate100 }}>
+          <TouchableOpacity key={b.id} onPress={() => setSelectedBranch(b.id)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedBranch === b.id ? colors.brand : colors.slate100 }}>
             <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: selectedBranch === b.id ? colors.white : colors.textSecondary }}>{b.name.split(" ")[0]}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -54,7 +54,7 @@ export function RmFinanceScreen() {
           {filtered.map((branch) => {
             const pct = Math.round((branch.usedBudget / branch.monthlyBudget) * 100);
             return (
-              <View key={branch.id} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
+              <TouchableOpacity key={branch.id} onPress={() => openBranchDetail(branch.id)} activeOpacity={0.7} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                     <View style={{ width: 24, height: 24, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
@@ -69,7 +69,7 @@ export function RmFinanceScreen() {
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Used: {formatMoney(branch.usedBudget)}</Text>
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Budget: {formatMoney(branch.monthlyBudget)}</Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>

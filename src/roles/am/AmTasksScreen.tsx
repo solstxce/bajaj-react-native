@@ -26,7 +26,7 @@ export function AmTasksScreen() {
         title="AM task board"
         action={
           <SegmentedControl
-            tabs={[{ label: "Worker Tasks", value: "worker" }, { label: "Employee Tasks", value: "employee" }, { label: "All", value: "all" }]}
+            tabs={[{ label: "Worker Tasks", value: "worker" }, { label: "All", value: "all" }]}
             activeKey={filter}
             onChange={(v) => setTab("amTasks", v)}
           />

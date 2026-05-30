@@ -5,6 +5,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
 import { Badge } from "../../shared/components/Badge";
 import { ProgressBar } from "../../shared/components/ProgressBar";
+import { QuickButton } from "../../shared/components/QuickButton";
 import { formatMoney, countdown } from "../../utils/helpers";
 import { Task, Complaint, Branch, User as UserType, Appliance, Approval, Visit } from "../../types/domain";
 
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export function DetailModal({ visible, onClose, entityType, entityId }: Props) {
-  const { getTask, getComplaint, getBranch, getUser, getAppliance, tasks, approvals, visits, state } = useApp();
+  const { getTask, getComplaint, getBranch, getUser, getAppliance, tasks, complaints, approvals, visits, state, currentUser, submitTaskProof, markTaskDone, revokeTask, resolveComplaint, escalateComplaint, assignVendor, approveRequest, rejectRequest, showToast } = useApp();
   const translateY = useRef(new Animated.Value(18)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -120,6 +121,13 @@ function renderTask(task: Task, getBranch: (id: number) => Branch | undefined, g
           <Text style={{ fontSize: fontSize.sm, color: colors.emerald700, marginTop: spacing.xs }}>By user #{task.completedBy} at {task.completedAt}</Text>
         </View>
       ) : null}
+      {task.status !== "Completed" ? (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+          <QuickButton label="Submit photo proof" onPress={() => { submitTaskProof(task.id); }} />
+          <QuickButton label="Mark complete" onPress={() => { markTaskDone(task.id); }} primary />
+          {task.status !== "Revoked" ? <QuickButton label="Revoke with comment" onPress={() => { revokeTask(task.id); }} /> : null}
+        </View>
+      ) : null}
     </>
   );
 }
@@ -162,6 +170,18 @@ function renderComplaint(complaint: Complaint, getBranch: (id: number) => Branch
           ))}
         </View>
       ) : null}
+      {complaint.status === "Pending" ? (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+          <QuickButton label="Resolve" onPress={() => { resolveComplaint(complaint.id); }} primary />
+          <QuickButton label="Escalate" onPress={() => { escalateComplaint(complaint.id); }} />
+          <QuickButton label="Assign vendor" onPress={() => { assignVendor(complaint.id); }} />
+        </View>
+      ) : complaint.status === "Escalated" ? (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+          <QuickButton label="Resolve" onPress={() => { resolveComplaint(complaint.id); }} primary />
+          <QuickButton label="Assign vendor" onPress={() => { assignVendor(complaint.id); }} />
+        </View>
+      ) : null}
     </>
   );
 }
@@ -169,39 +189,96 @@ function renderComplaint(complaint: Complaint, getBranch: (id: number) => Branch
 function renderBranch(branch: Branch, getUser: (id: number) => UserType | undefined) {
   const manager = getUser(branch.managerId);
   const aa = getUser(branch.assistantManagerId);
+  const budgetPct = Math.round((branch.usedBudget / branch.monthlyBudget) * 100);
   return (
     <>
-      <View style={{ gap: spacing.md }}>
-        <View style={{ backgroundColor: colors.brandLight, borderRadius: borderRadius["2xl"], paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, alignSelf: "flex-start" }}>
-          <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.brand }}>{branch.code}</Text>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xl }}>
+        <View style={{ flex: 1, minWidth: 240, gap: spacing.xl }}>
+          <View style={{ backgroundColor: colors.text, borderRadius: borderRadius["4xl"], padding: spacing["2xl"] }}>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.slate300, textTransform: "uppercase", letterSpacing: 2 }}>{branch.code}</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white, marginTop: spacing.sm }}>{branch.name}</Text>
+            <Text style={{ fontSize: fontSize.sm, color: colors.slate300, marginTop: spacing.xs }}>{branch.address}</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xl }}>
+              {[
+                { label: "Health", value: branch.health + "%", color: colors.success },
+                { label: "Attendance", value: branch.todayAttendance + "%", color: colors.brand },
+                { label: "SLA", value: branch.sla + "%", color: colors.info },
+                { label: "Alerts", value: String(branch.criticalAlerts), color: colors.error },
+              ].map((s) => (
+                <View key={s.label} style={{ flex: 1, minWidth: 60, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: borderRadius["2xl"], padding: spacing.md, alignItems: "center" }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate300 }}>{s.label}</Text>
+                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: s.color, marginTop: spacing.xs }}>{s.value}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+          <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius["4xl"], padding: spacing["2xl"] }}>
+            <View style={{ gap: spacing.md }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Branch Manager</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{manager?.name || "—"}</Text>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>AA / LC</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{aa?.name || "—"}</Text>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Geo radius</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{branch.geoRadius}m</Text>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Shift window</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{branch.shiftWindow}</Text>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Next visit</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{branch.nextVisit}</Text>
+              </View>
+            </View>
+          </View>
         </View>
-        <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text }}>{branch.name}</Text>
-        <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{branch.address}</Text>
-      </View>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
-        <MiniStat label="Health" value={branch.health + "%"} color={colors.success} />
-        <MiniStat label="SLA" value={branch.sla + "%"} color={colors.brand} />
-        <MiniStat label="Audit" value={branch.auditScore + "%"} color={colors.info} />
-        <MiniStat label="Footfall" value={String(branch.customerFootfall)} color={colors.text} />
-      </View>
-      <View style={{ gap: spacing.md }}>
-        <DetailRow icon={User} label="Manager" value={manager?.name || "—"} />
-        <DetailRow icon={User} label="AA/LC" value={aa?.name || "—"} />
-        <DetailRow icon={Phone} label="Phone" value={branch.phone} />
-        <DetailRow icon={Mail} label="Email" value={branch.email} />
-        <DetailRow icon={Activity} label="Shift" value={branch.shiftWindow} />
-        <DetailRow icon={MapPin} label="Geo radius" value={branch.geoRadius + "m"} />
-      </View>
-      <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius["4xl"], padding: spacing.xl }}>
-        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, marginBottom: spacing.sm }}>Staff & Resources</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xl }}>
-          <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Staff: {branch.staffCount}</Text>
-          <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Workers: {branch.workerCount}</Text>
-          <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Employees: {branch.employeeCount}</Text>
-        </View>
-        <View style={{ marginTop: spacing.md }}>
-          <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, marginBottom: spacing.xs }}>Budget: {formatMoney(branch.usedBudget)} / {formatMoney(branch.monthlyBudget)}</Text>
-          <ProgressBar value={(branch.usedBudget / branch.monthlyBudget) * 100} color={branch.usedBudget > branch.monthlyBudget * 0.8 ? colors.warning : colors.success} />
+
+        <View style={{ flex: 2, minWidth: 280, gap: spacing.xl }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+            {[
+              { label: "Staff", value: String(branch.staffCount), meta: `${branch.workerCount} workers`, accent: colors.brandSecondary },
+              { label: "Issues", value: String(branch.openIssues), meta: "Open and escalated", accent: colors.warning },
+              { label: "Tasks", value: String(branch.staffCount * 3), meta: "Still pending", accent: colors.error },
+              { label: "Budget left", value: formatMoney(branch.monthlyBudget - branch.usedBudget), meta: "After current spend", accent: colors.success },
+            ].map((s) => (
+              <View key={s.label} style={{ flex: 1, minWidth: 100, backgroundColor: colors.slate50, borderRadius: borderRadius["2xl"], padding: spacing.lg }}>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</Text>
+                <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.xs }}>{s.value}</Text>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>{s.meta}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius["4xl"], padding: spacing["2xl"] }}>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Operational drill-down</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.xl }}>
+              <View style={{ flex: 1, minWidth: 140, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.xl }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>People mix</Text>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>{branch.workerCount} workers, 1 AM.</Text>
+              </View>
+              <View style={{ flex: 1, minWidth: 140, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.xl }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Appliance status</Text>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>{branch.applianceRisk} asset(s) need action.</Text>
+              </View>
+              <View style={{ flex: 1, minWidth: 140, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.xl }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Audit readiness</Text>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Last audit {branch.auditScore}% with safety logs mostly complete.</Text>
+              </View>
+              <View style={{ flex: 1, minWidth: 140, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.xl }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Finance posture</Text>
+                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Used {budgetPct}% of monthly budget.</Text>
+              </View>
+            </View>
+            <View style={{ marginTop: spacing.lg }}>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, marginBottom: spacing.xs }}>Budget: {formatMoney(branch.usedBudget)} / {formatMoney(branch.monthlyBudget)}</Text>
+              <ProgressBar value={budgetPct} color={budgetPct > 80 ? colors.error : budgetPct > 60 ? colors.warning : colors.success} />
+            </View>
+          </View>
         </View>
       </View>
     </>

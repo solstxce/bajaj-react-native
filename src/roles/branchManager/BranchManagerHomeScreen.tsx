@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Building, AlertCircle, Stamp, Route, Users, TrendingUp, Clock, CheckCircle, ChevronRight, TriangleAlert } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
+import { AlertStrip } from "../../shared/components/AlertStrip";
 import { StatCard } from "../../shared/components/StatCard";
 import { Card } from "../../shared/components/Card";
 import { Badge } from "../../shared/components/Badge";
@@ -11,7 +12,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function BranchManagerHomeScreen() {
-  const { scopedBranches, scopedApprovals, scopedNotifications, getBranch, setPage, showToast, approveRequest, rejectRequest } = useApp();
+  const { scopedBranches, scopedApprovals, scopedNotifications, getBranch, setPage, showToast, approveRequest, rejectRequest, openBranchDetail, openAuditTrail } = useApp();
   const totalStaff = scopedBranches.reduce((s, b) => s + b.staffCount, 0);
   const totalIssues = scopedBranches.reduce((s, b) => s + b.openIssues, 0);
   const avgSla = scopedBranches.length ? Math.round(scopedBranches.reduce((s, b) => s + b.sla, 0) / scopedBranches.length) : 0;
@@ -30,6 +31,8 @@ export function BranchManagerHomeScreen() {
         }
       />
 
+      <AlertStrip onReviewAlerts={() => setPage("notifications")} onOpenAudit={openAuditTrail} />
+
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
         <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Branches managed" value={String(scopedBranches.length)} meta="Under your oversight" accent={colors.brand} icon={Building} /></View>
         <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Total staff" value={String(totalStaff)} meta="Across all branches" accent={colors.slate600} icon={Users} /></View>
@@ -47,7 +50,7 @@ export function BranchManagerHomeScreen() {
           </View>
           <View style={{ gap: spacing.md }}>
             {scopedBranches.map((branch) => (
-              <View key={branch.id} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
+              <TouchableOpacity key={branch.id} onPress={() => openBranchDetail(branch.id)} activeOpacity={0.7} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.name}</Text>
@@ -87,7 +90,7 @@ export function BranchManagerHomeScreen() {
                     <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.error }}>{branch.criticalAlerts}</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </Card>

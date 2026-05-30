@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Modal, ScrollView } from "react-native";
-import { HardHat, UserCheck, UserCog, Briefcase, Crown, X, Check } from "lucide-react-native";
+import { HardHat, UserCog, Briefcase, Crown, X, Check } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
 import { ROLES } from "../../data/mockData";
 import { RoleId } from "../../types/domain";
@@ -13,7 +13,6 @@ interface Props {
 
 const roleIconMap: Record<string, React.ComponentType<any>> = {
   worker: HardHat,
-  employee: UserCheck,
   am: UserCog,
   branchManager: Briefcase,
   rm: Crown,
@@ -21,7 +20,6 @@ const roleIconMap: Record<string, React.ComponentType<any>> = {
 
 const roleAccentMap: Record<string, string> = {
   worker: colors.brandSecondary,
-  employee: colors.brand,
   am: colors.success,
   branchManager: colors.brandDeep,
   rm: colors.brand,

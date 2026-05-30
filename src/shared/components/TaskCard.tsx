@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Clock, MapPin, CheckSquare, ShieldAlert, Camera, RotateCcw } from "lucide-react-native";
+import { Clock, MapPin, CheckSquare, ShieldAlert, Camera, RotateCcw, Eye } from "lucide-react-native";
 import { Task } from "../../types/domain";
 import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function TaskCard({ task, compact = false, actions }: Props) {
-  const { getBranch, getUser } = useApp();
+  const { getBranch, getUser, openTaskDetail } = useApp();
   const branch = getBranch(task.branchId);
   const assignee = task.assignedTo ? getUser(task.assignedTo)?.name : "Shared";
   const pct = (task.checklistDone / task.checklistTotal) * 100;
@@ -89,6 +89,21 @@ export function TaskCard({ task, compact = false, actions }: Props) {
 
         {actions && actions.length > 0 ? (
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+            <TouchableOpacity
+              onPress={() => openTaskDetail(task.id)}
+              style={{
+                borderRadius: borderRadius.lg,
+                paddingHorizontal: spacing.xl,
+                paddingVertical: spacing.md,
+                backgroundColor: colors.brand,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: spacing.sm,
+              }}
+            >
+              <Eye size={14} color={colors.white} strokeWidth={2} />
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Detail</Text>
+            </TouchableOpacity>
             {actions.map((a, i) => (
               <TouchableOpacity
                 key={i}

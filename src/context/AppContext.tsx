@@ -104,6 +104,7 @@ interface AppContextValue {
   setTab: (key: keyof TabState, value: string) => void;
   openModal: (type: string, data?: any) => void;
   closeModal: () => void;
+  openFormModal: (formType?: string) => void;
   openTaskDetail: (id: number) => void;
   openComplaintDetail: (id: number) => void;
   openBranchDetail: (id: number) => void;
@@ -126,13 +127,14 @@ interface AppContextValue {
   createTask: (data: Partial<Task>) => void;
   createComplaint: (data: Partial<Complaint>) => void;
   createUser: (name: string, role: RoleId, branchId: number) => void;
-  createStaff: (name: string, role: "worker" | "employee", position: string, phone: string, shift: string) => void;
+  createStaff: (name: string, role: "worker", position: string, phone: string, shift: string) => void;
   createAppliance: (data: Partial<Appliance>) => void;
   createExpense: (title: string, amount: number, vendor: string, desc: string) => void;
   createVisit: (branchId: number, date: string, purpose: string, agenda: string) => void;
   submitVisitReport: (id: number) => void;
   saveSettings: (settings: any) => void;
   showToast: (message: string) => void;
+  openAuditTrail: () => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -151,7 +153,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = React.useState({
     geoRadius: 180,
     workerEscalationMins: 45,
-    employeeEscalationMins: 120,
+
     criticalAlertRule: "2 misses in 3 days",
     deadlineRule: "Auto escalate until RM if proof is missing",
   });
@@ -187,7 +189,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!branch) return;
     branch.staffCount += 1;
     if (role === "worker") branch.workerCount += 1;
-    if (role === "employee") branch.employeeCount += 1;
   }, [branches]);
 
   const setPage = useCallback((page: string) => dispatch({ type: "SET_PAGE", page }), []);
@@ -195,6 +196,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setTab = useCallback((key: keyof TabState, value: string) => dispatch({ type: "SET_TAB", key, value }), []);
   const openModal = useCallback((type: string, data?: any) => dispatch({ type: "OPEN_MODAL", modalType: type, modalData: data }), []);
   const closeModal = useCallback(() => dispatch({ type: "CLOSE_MODAL" }), []);
+  const openFormModal = useCallback((formType?: string) => dispatch({ type: "OPEN_MODAL", modalType: "form", modalData: formType ? { formType } : {} }), []);
+  const openAuditTrail = useCallback(() => dispatch({ type: "OPEN_MODAL", modalType: "audit" }), []);
   const openTaskDetail = useCallback((id: number) => dispatch({ type: "OPEN_MODAL", modalType: "task", modalData: { id } }), []);
   const openComplaintDetail = useCallback((id: number) => dispatch({ type: "OPEN_MODAL", modalType: "complaint", modalData: { id } }), []);
   const openBranchDetail = useCallback((id: number) => dispatch({ type: "OPEN_MODAL", modalType: "branch", modalData: { id } }), []);
@@ -332,20 +335,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deviceId: "USR-" + (users.length + 1),
     };
     setUsers((prev) => [...prev, newUser]);
-    if (["worker", "employee", "am"].includes(role)) updateBranchPeopleCount(branchId, role);
+    if (["worker", "am"].includes(role)) updateBranchPeopleCount(branchId, role);
     showToast("User created");
   }, [users.length, currentUser, showToast, updateBranchPeopleCount]);
 
-  const createStaff = useCallback((name: string, role: "worker" | "employee", position: string, phone: string, shift: string) => {
+  const createStaff = useCallback((name: string, role: "worker", position: string, phone: string, shift: string) => {
     const newUser: User = {
       id: users.length + 1, name, role, branchId: currentUser.branchId, position,
       phone: phone || "Not added", email: name.toLowerCase().replace(/\s+/g, ".") + "@bajaj.com",
-      shift: shift || (role === "worker" ? "07:00 - 15:00" : "09:00 - 18:00"),
+      shift: "07:00 - 15:00",
       joinDate: "2026-04-26", status: "Present", rating: 4.0, attendancePct: 100,
       tasksClosed: 0, proofRate: 100, escalations: 0, managerId: currentUser.id,
-      salary: role === "worker" ? 19000 : 31000, lastCheckIn: "Not marked",
+      salary: 19000, lastCheckIn: "Not marked",
       skills: ["New joiner"], emergencyContact: "To be added",
-      documents: ["Pending onboarding docs"], deviceId: "NEW-" + role.toUpperCase() + "-" + (users.length + 1),
+      documents: ["Pending onboarding docs"],       deviceId: "NEW-WK-" + (users.length + 1),
     };
     setUsers((prev) => [...prev, newUser]);
     updateBranchPeopleCount(currentUser.branchId, role);
@@ -407,14 +410,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     currentUser, scopedBranchIds, scopedBranches, scopedTasks, scopedComplaints, scopedUsers,
     scopedApprovals, scopedAppliances, scopedNotifications, scopedAttendance,
     getBranch, getUser, getTask, getComplaint, getAppliance,
-    setPage, switchRole, setTab, openModal, closeModal,
+    setPage, switchRole, setTab, openModal, closeModal, openFormModal,
     openTaskDetail, openComplaintDetail, openBranchDetail, openUserDetail,
     openApplianceDetail, openApprovalDetail, openVisitDetail,
     markAttendance, submitTaskProof, markTaskDone, revokeTask,
     resolveComplaint, escalateComplaint, assignVendor, approveHighCost,
     approveRequest, rejectRequest, toggleNotificationRead, toggleBookmark,
     createTask, createComplaint, createUser, createStaff, createAppliance, createExpense, createVisit,
-    submitVisitReport, saveSettings, showToast,
+    submitVisitReport, saveSettings, showToast, openAuditTrail,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

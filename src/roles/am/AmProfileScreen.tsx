@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text } from "react-native";
-import { UserCog, Mail, Phone, Clock, Smartphone, Award, FileText, CalendarDays, Phone as PhoneIcon } from "lucide-react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { UserCog, Mail, Phone, Clock, Smartphone, Award, FileText, CalendarDays, Phone as PhoneIcon, ChevronRight } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
 import { StatCard } from "../../shared/components/StatCard";
@@ -9,7 +9,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function AmProfileScreen() {
-  const { currentUser, getBranch } = useApp();
+  const { currentUser, getBranch, openAuditTrail } = useApp();
   const branch = getBranch(currentUser.branchId)!;
 
   const detailRows = [
@@ -110,6 +110,17 @@ export function AmProfileScreen() {
               </View>
             </View>
           </Card>
+
+          <TouchableOpacity onPress={openAuditTrail} style={{ backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.xl }}>
+            <View style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
+              <FileText size={16} color={colors.brand} strokeWidth={2} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>Open audit trail</Text>
+              <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Review all actions taken on your account</Text>
+            </View>
+            <ChevronRight size={16} color={colors.textSecondary} strokeWidth={2} />
+          </TouchableOpacity>
         </View>
       </View>
     </ScreenWrapper>

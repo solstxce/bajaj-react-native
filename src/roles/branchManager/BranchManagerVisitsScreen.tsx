@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Route, Calendar, Clock, CheckCircle, MapPin, Send } from "lucide-react-native";
+import { Route, Calendar, Clock, CheckCircle, MapPin, Send, Eye } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
 import { StatCard } from "../../shared/components/StatCard";
@@ -10,7 +10,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function BranchManagerVisitsScreen() {
-  const { scopedBranchIds, visits, getBranch, submitVisitReport } = useApp();
+  const { scopedBranchIds, visits, getBranch, submitVisitReport, openVisitDetail } = useApp();
   const scopedVisits = visits.filter((v) => scopedBranchIds.includes(v.branchId));
 
   const upcomingVisits = scopedVisits.filter((v) => v.status === "Scheduled");
@@ -66,16 +66,33 @@ export function BranchManagerVisitsScreen() {
                     </View>
                   </View>
                   {visit.status === "Scheduled" || visit.status === "Escalated" ? (
-                    <View style={{ flexDirection: "row", marginTop: spacing.xl }}>
+                    <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.xl }}>
                       <TouchableOpacity
-                        onPress={() => submitVisitReport(visit.id)}
+                        onPress={() => openVisitDetail(visit.id)}
                         style={{ backgroundColor: colors.brand, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
                       >
-                        <Send size={14} color={colors.white} strokeWidth={2} />
-                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Submit Report</Text>
+                        <Eye size={14} color={colors.white} strokeWidth={2} />
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Detail</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => submitVisitReport(visit.id)}
+                        style={{ backgroundColor: colors.card, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm, borderWidth: 1, borderColor: colors.border }}
+                      >
+                        <Send size={14} color={colors.text} strokeWidth={2} />
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Submit Report</Text>
                       </TouchableOpacity>
                     </View>
-                  ) : null}
+                  ) : (
+                    <View style={{ flexDirection: "row", marginTop: spacing.xl }}>
+                      <TouchableOpacity
+                        onPress={() => openVisitDetail(visit.id)}
+                        style={{ backgroundColor: colors.brand, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
+                      >
+                        <Eye size={14} color={colors.white} strokeWidth={2} />
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Detail</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </View>
               );
             }) : (

@@ -1,4 +1,4 @@
-export type RoleId = "worker" | "employee" | "am" | "branchManager" | "rm";
+export type RoleId = "worker" | "am" | "branchManager" | "rm";
 
 export type Priority = "Critical" | "High" | "Medium" | "Low";
 
@@ -47,7 +47,7 @@ export type Branch = {
   todayAttendance: number;
   staffCount: number;
   workerCount: number;
-  employeeCount: number;
+
   monthlyBudget: number;
   usedBudget: number;
   openIssues: number;
@@ -199,7 +199,7 @@ export type AttendanceLog = {
 
 export type TabState = {
   workerTasks: string;
-  employeeTasks: string;
+
   amTasks: string;
   amBranch: string;
   managerMonitoring: string;

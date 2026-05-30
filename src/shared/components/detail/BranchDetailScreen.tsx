@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import {
-  Building, Users, HardHat, UserCheck, TrendingUp, DollarSign, Activity,
+  Building, Users, HardHat, TrendingUp, DollarSign, Activity,
   AlertCircle, TriangleAlert, ShieldCheck, Clock, CalendarDays, MapPin,
   Phone, Mail, ChevronRight, BarChart3, Eye, Wrench, Zap, Thermometer,
   Camera, CheckCircle2, XCircle, ArrowUpRight
@@ -39,7 +39,6 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
   const branchApprovals = scopedApprovals.filter((a) => a.branchId === branchId);
 
   const workers = branchUsers.filter((u) => u.role === "worker");
-  const employees = branchUsers.filter((u) => u.role === "employee");
   const pendingTasks = branchTasks.filter((t) => t.status === "Pending").length;
   const completedTasks = branchTasks.filter((t) => t.status === "Completed").length;
   const openComplaints = branchComplaints.filter((c) => c.status !== "Resolved").length;
@@ -103,13 +102,6 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
                 <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.textSecondary }}>Workers</Text>
               </View>
               <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: colors.text, marginTop: spacing.sm }}>{branch.workerCount}</Text>
-            </View>
-            <View style={{ flex: 1, minWidth: 100, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.lg }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                <UserCheck size={16} color={colors.brand} />
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.textSecondary }}>Employees</Text>
-              </View>
-              <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: colors.text, marginTop: spacing.sm }}>{branch.employeeCount}</Text>
             </View>
           </View>
           <View style={{ marginTop: spacing.md, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.lg, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

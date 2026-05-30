@@ -11,12 +11,11 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function BranchManagerMonitoringScreen() {
-  const { state, setTab, scopedBranches, scopedTasks, showToast, markTaskDone, revokeTask } = useApp();
+  const { state, setTab, scopedBranches, scopedTasks, showToast, markTaskDone, revokeTask, openTaskDetail, openBranchDetail } = useApp();
   const activeTab = state.tabs.managerMonitoring;
 
   const filteredTasks = scopedTasks.filter((t) => {
     if (activeTab === "workers") return t.audience === "worker";
-    if (activeTab === "employees") return t.audience === "employee";
     return true;
   });
 
@@ -28,7 +27,6 @@ export function BranchManagerMonitoringScreen() {
           <SegmentedControl
             tabs={[
               { label: "Worker Tasks", value: "workers" },
-              { label: "Employee Tasks", value: "employees" },
               { label: "All", value: "all" },
             ]}
             activeKey={activeTab}
@@ -47,7 +45,7 @@ export function BranchManagerMonitoringScreen() {
         {scopedBranches.map((branch) => {
           const branchTasks = filteredTasks.filter((t) => t.branchId === branch.id);
           return (
-            <View key={branch.id} style={{ flex: 1, minWidth: 200 }}>
+            <TouchableOpacity key={branch.id} style={{ flex: 1, minWidth: 200 }} onPress={() => openBranchDetail(branch.id)} activeOpacity={0.7}>
               <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.xl, padding: spacing.xl }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.sm }}>
                   <View style={{ width: 24, height: 24, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
@@ -61,7 +59,7 @@ export function BranchManagerMonitoringScreen() {
                   <Text style={{ fontSize: fontSize.sm, color: colors.success }}>{branchTasks.filter((t) => t.status === "Completed").length} done</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           );
         })}
       </View>

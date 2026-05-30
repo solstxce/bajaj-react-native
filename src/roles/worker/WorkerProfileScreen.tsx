@@ -11,7 +11,7 @@ import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 import { formatPct } from "../../utils/helpers";
 
 export function WorkerProfileScreen() {
-  const { currentUser, getBranch, showToast } = useApp();
+  const { currentUser, getBranch, openUserDetail, openAuditTrail } = useApp();
   const branch = getBranch(currentUser.branchId)!;
 
   const detailRows = [
@@ -25,7 +25,7 @@ export function WorkerProfileScreen() {
     <ScreenWrapper>
       <SectionHeader
         title="Profile & identity"
-        action={<QuickButton label="Open detail view" onPress={() => showToast("Detail modal coming in Phase 7")} />}
+        action={<QuickButton label="Open detail view" onPress={() => openUserDetail(currentUser.id)} />}
       />
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xl, marginTop: spacing.xl }}>
@@ -115,6 +115,17 @@ export function WorkerProfileScreen() {
               </View>
             </View>
           </Card>
+
+          <TouchableOpacity onPress={openAuditTrail} style={{ backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.xl }}>
+            <View style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
+              <FileText size={16} color={colors.brand} strokeWidth={2} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>Open audit trail</Text>
+              <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Review all actions taken on your account</Text>
+            </View>
+            <ChevronRight size={16} color={colors.textSecondary} strokeWidth={2} />
+          </TouchableOpacity>
         </View>
       </View>
     </ScreenWrapper>

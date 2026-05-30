@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Wrench, MapPin, DollarSign, TrendingUp, Calendar } from "lucide-react-native";
+import { Wrench, MapPin, DollarSign, TrendingUp, Calendar, Eye } from "lucide-react-native";
 import { Complaint } from "../../types/domain";
 import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function ComplaintCard({ item, actions }: Props) {
-  const { getBranch } = useApp();
+  const { getBranch, openComplaintDetail } = useApp();
   const branch = getBranch(item.branchId);
 
   return (
@@ -69,7 +69,22 @@ export function ComplaintCard({ item, actions }: Props) {
         </View>
 
         {actions && actions.length > 0 ? (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.lg }}>
+            <TouchableOpacity
+              onPress={() => openComplaintDetail(item.id)}
+              style={{
+                borderRadius: borderRadius.lg,
+                paddingHorizontal: spacing.xl,
+                paddingVertical: spacing.md,
+                backgroundColor: colors.brand,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: spacing.sm,
+              }}
+            >
+              <Eye size={14} color={colors.white} strokeWidth={2} />
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Detail</Text>
+            </TouchableOpacity>
             {actions.map((a, i) => (
               <TouchableOpacity
                 key={i}

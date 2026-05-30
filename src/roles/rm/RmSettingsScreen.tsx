@@ -18,7 +18,7 @@ export function RmSettingsScreen() {
       items: [
         { label: "Critical alert rule", value: "2 misses in 3 days" },
         { label: "Deadline rule", value: "Auto escalate until RM if proof is missing" },
-        { label: "Escalation timeout", value: "45 min worker / 120 min employee" },
+        { label: "Escalation timeout", value: "45 min worker" },
       ],
     },
     {
@@ -37,7 +37,8 @@ export function RmSettingsScreen() {
       iconColor: colors.warning,
       items: [
         { label: "Worker shift window", value: "07:00 - 15:00" },
-        { label: "Employee shift window", value: "09:00 - 18:00" },
+
+
         { label: "Weekend schedule", value: "Alternate Saturdays off" },
       ],
     },

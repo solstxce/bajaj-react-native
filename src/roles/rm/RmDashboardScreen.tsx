@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { BarChart3, Building, Users, Clock, TriangleAlert, TrendingUp, FileText, Bell, ShieldCheck, AlertCircle, ChevronRight, DollarSign } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
+import { AlertStrip } from "../../shared/components/AlertStrip";
 import { StatCard } from "../../shared/components/StatCard";
 import { Card } from "../../shared/components/Card";
 import { Badge } from "../../shared/components/Badge";
@@ -12,7 +13,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function RmDashboardScreen() {
-  const { scopedBranches, scopedUsers, scopedTasks, scopedComplaints, currentUser, showToast, setPage } = useApp();
+  const { scopedBranches, scopedUsers, scopedTasks, scopedComplaints, currentUser, showToast, setPage, openBranchDetail, openAuditTrail } = useApp();
   const totalBranches = scopedBranches.length;
   const totalStaff = scopedUsers.length;
   const avgSla = Math.round(scopedBranches.reduce((s, b) => s + b.sla, 0) / totalBranches);
@@ -32,6 +33,8 @@ export function RmDashboardScreen() {
         }
       />
 
+      <AlertStrip onReviewAlerts={() => setPage("alerts")} onOpenAudit={openAuditTrail} />
+
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
         <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Total branches" value={String(totalBranches)} meta="Across region" accent={colors.brand} icon={Building} /></View>
         <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Total staff" value={String(totalStaff)} meta="All roles combined" accent={colors.brandSecondary} icon={Users} /></View>
@@ -48,7 +51,7 @@ export function RmDashboardScreen() {
         </View>
         <View style={{ gap: spacing.md }}>
           {scopedBranches.map((branch) => (
-            <TouchableOpacity key={branch.id} onPress={() => setPage("intelligence")} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
+            <TouchableOpacity key={branch.id} onPress={() => openBranchDetail(branch.id)} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>

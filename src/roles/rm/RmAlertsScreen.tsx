@@ -10,7 +10,7 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function RmAlertsScreen() {
-  const { state, setTab, scopedNotifications, scopedBranches, showToast } = useApp();
+  const { state, setTab, scopedNotifications, scopedBranches, showToast, openBranchDetail } = useApp();
   const filter = state.tabs.rmAlerts || "critical";
   const [selectedBranch, setSelectedBranch] = useState<number | null>(null);
 
@@ -52,7 +52,9 @@ export function RmAlertsScreen() {
                   <Badge label={item.priority} type={item.priority} />
                   <Badge label={item.read ? "Read" : "Unread"} type={item.read ? "Completed" : "Pending"} />
                 </View>
-                <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.md }}>{item.title}</Text>
+                <TouchableOpacity onPress={() => { const b = scopedBranches.find((br) => br.id === item.branchId); if (b) openBranchDetail(b.id); }}>
+                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.md }}>{item.title}</Text>
+                </TouchableOpacity>
                 <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, marginTop: spacing.xs }}>{item.detail}</Text>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.lg }}>{item.time}</Text>
               </View>

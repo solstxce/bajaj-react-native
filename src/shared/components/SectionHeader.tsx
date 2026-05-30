@@ -8,10 +8,11 @@ interface Props {
   action?: ReactNode;
 }
 
-export function SectionHeader({ title, action }: Props) {
+export function SectionHeader({ title, subtitle, action }: Props) {
   return (
     <View style={{ gap: spacing.md }}>
       <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: colors.text, letterSpacing: -0.3 }}>{title}</Text>
+      {subtitle ? <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{subtitle}</Text> : null}
       {action && <View>{action}</View>}
     </View>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { AlertCircle, TrendingUp, CheckCircle2, Send } from "lucide-react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { AlertCircle, TrendingUp, CheckCircle2, Send, ChevronDown } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
 import { StatCard } from "../../shared/components/StatCard";
@@ -73,17 +73,27 @@ export function WorkerComplaintsScreen() {
                   style={{ borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, fontSize: fontSize.sm, color: colors.text }}
                 />
               </View>
-              <View style={{ flexDirection: "row", gap: spacing.lg }}>
-                <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: "column", gap: spacing.md }}>
+                <View>
                   <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.textSecondary, marginBottom: spacing.xs }}>Type</Text>
-                  <View style={{ borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.xl, paddingVertical: spacing.md }}>
-                    <TextInput value={type} onChangeText={setType} placeholder="Type" placeholderTextColor={colors.textSecondary} style={{ fontSize: fontSize.sm, color: colors.text }} />
-                  </View>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexDirection: "row" }}>
+                    <View style={{ flexDirection: "row", gap: spacing.sm }}>
+                      {["Appliance", "Electrical", "Plumbing", "Safety", "Security"].map((t) => (
+                        <TouchableOpacity key={t} onPress={() => setType(t)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: type === t ? colors.brand : colors.slate100 }}>
+                          <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: type === t ? colors.white : colors.textSecondary }}>{t}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </ScrollView>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View>
                   <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.textSecondary, marginBottom: spacing.xs }}>Priority</Text>
-                  <View style={{ borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.xl, paddingVertical: spacing.md }}>
-                    <TextInput value={priority} onChangeText={setPriority} placeholder="Priority" placeholderTextColor={colors.textSecondary} style={{ fontSize: fontSize.sm, color: colors.text }} />
+                  <View style={{ flexDirection: "row", gap: spacing.sm }}>
+                    {["Low", "Medium", "High", "Critical"].map((p) => (
+                      <TouchableOpacity key={p} onPress={() => setPriority(p)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: priority === p ? colors.brand : colors.slate100 }}>
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: priority === p ? colors.white : colors.textSecondary }}>{p}</Text>
+                      </TouchableOpacity>
+                    ))}
                   </View>
                 </View>
               </View>

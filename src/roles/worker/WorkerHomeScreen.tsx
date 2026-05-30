@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Camera, MapPin, TriangleAlert, Clock, ShieldCheck, AlertCircle, CalendarDays, ChevronRight } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
+import { AlertStrip } from "../../shared/components/AlertStrip";
 import { StatCard } from "../../shared/components/StatCard";
 import { Card } from "../../shared/components/Card";
 import { TaskCard } from "../../shared/components/TaskCard";
@@ -12,7 +13,7 @@ import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 import { formatPct, countdown } from "../../utils/helpers";
 
 export function WorkerHomeScreen() {
-  const { currentUser, getBranch, tasks, showToast, markAttendance, submitTaskProof, setPage } = useApp();
+  const { currentUser, getBranch, tasks, showToast, markAttendance, submitTaskProof, setPage, openFormModal, openAuditTrail } = useApp();
   const branch = getBranch(currentUser.branchId)!;
   const ownTasks = tasks
     .filter((t) => t.branchId === currentUser.branchId && t.audience === "worker" && (!t.assignedTo || t.assignedTo === currentUser.id))
@@ -25,10 +26,12 @@ export function WorkerHomeScreen() {
         action={
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
             <QuickButton label="Mark Attendance" icon={MapPin} onPress={() => { markAttendance(); }} />
-            <QuickButton label="Raise Issue" icon={AlertCircle} onPress={() => showToast("Issue form coming in Phase 7")} />
+            <QuickButton label="Raise Issue" icon={AlertCircle} onPress={() => openFormModal("complaint")} />
           </View>
         }
       />
+
+      <AlertStrip onReviewAlerts={() => setPage("notifications")} onOpenAudit={openAuditTrail} />
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
         <View style={{ width: "47%" }}><StatCard label="Today's proof tasks" value={String(ownTasks.length)} meta="1 critical task missing proof" accent={colors.brand} icon={Camera} /></View>

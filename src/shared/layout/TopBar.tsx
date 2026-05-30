@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Search, Bell, ChevronDown, User } from "lucide-react-native";
+import { Search, Bell, ChevronDown, User, Plus, RefreshCw } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
 import { ROLES } from "../../data/mockData";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
@@ -8,17 +8,25 @@ import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 interface Props {
   onSearchPress?: () => void;
   onRolePress?: () => void;
+  onFormPress?: () => void;
   onNotificationPress?: () => void;
   onProfilePress?: () => void;
 }
 
-export function TopBar({ onSearchPress, onRolePress, onNotificationPress, onProfilePress }: Props) {
-  const { state, currentUser } = useApp();
+export function TopBar({ onSearchPress, onRolePress, onFormPress, onNotificationPress, onProfilePress }: Props) {
+  const { state, currentUser, notifications } = useApp();
   const role = ROLES[state.role];
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <View style={{ backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.border, paddingTop: spacing.sm }}>
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.xl, height: 48, gap: spacing.sm }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs, paddingHorizontal: spacing.sm }}>
+          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success }} />
+          <RefreshCw size={10} color={colors.textSecondary} strokeWidth={2} />
+          <Text style={{ fontSize: 9, color: colors.textSecondary }}>Live</Text>
+        </View>
+
         <TouchableOpacity
           onPress={onRolePress}
           style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, backgroundColor: colors.slate50, borderRadius: borderRadius.md, borderWidth: 1, borderColor: colors.border }}
@@ -39,10 +47,22 @@ export function TopBar({ onSearchPress, onRolePress, onNotificationPress, onProf
         </TouchableOpacity>
 
         <TouchableOpacity
+          onPress={onFormPress}
+          style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand, alignItems: "center", justifyContent: "center" }}
+        >
+          <Plus size={16} color={colors.white} strokeWidth={2.5} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={onNotificationPress}
           style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.slate50, borderWidth: 1, borderColor: colors.border, alignItems: "center", justifyContent: "center" }}
         >
           <Bell size={14} color={colors.textSecondary} />
+          {unreadCount > 0 ? (
+            <View style={{ position: "absolute", top: -4, right: -4, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.error, alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ fontSize: 9, fontWeight: "700", color: colors.white }}>{unreadCount > 9 ? "9+" : unreadCount}</Text>
+            </View>
+          ) : null}
         </TouchableOpacity>
 
         <TouchableOpacity
