@@ -29,7 +29,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, flex: 1 }}>Visit Details</Text>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, flex: 1 }}>Visit Details</Text>
       </View>
 
       <Card variant="soft" style={{ backgroundColor: colors.text, marginBottom: spacing.xl }}>
@@ -38,7 +38,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
             <View style={{ flexDirection: "row", gap: spacing.sm, alignItems: "center" }}>
               <Badge label={visit.status} type={visit.status as any} />
             </View>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white, marginTop: spacing.lg }}>{visit.purpose}</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.white, marginTop: spacing.lg }}>{visit.purpose}</Text>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.sm }}>
               <MapPin size={14} color={colors.slate300} strokeWidth={2} />
               <Text style={{ fontSize: fontSize.sm, color: colors.slate300 }}>{branch?.name || "Branch " + visit.branchId}</Text>
@@ -56,7 +56,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Route size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Visit Information</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Visit Information</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             {[
@@ -70,7 +70,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
+                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -81,7 +81,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <FileText size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Agenda</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Agenda</Text>
           </View>
           <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl }}>
             <Text style={{ fontSize: fontSize.sm, color: colors.text, lineHeight: 20 }}>{visit.agenda}</Text>
@@ -94,7 +94,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
               <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.success + "15", alignItems: "center", justifyContent: "center" }}>
                 <CheckCircle2 size={16} color={colors.success} strokeWidth={2} />
               </View>
-              <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Visit Report</Text>
+              <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Visit Report</Text>
             </View>
             <View style={{ backgroundColor: colors.emerald50, borderRadius: borderRadius.lg, padding: spacing.xl, flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
               <CheckCircle2 size={16} color={colors.emerald700} strokeWidth={2} style={{ marginTop: 2 }} />
@@ -106,7 +106,7 @@ export function VisitDetailScreen({ visitId, onBack }: Props) {
         {(visit.status === "Scheduled" || visit.status === "Escalated") && (
           <TouchableOpacity onPress={() => submitVisitReport(visit.id)} style={{ backgroundColor: colors.brand, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
             <Send size={16} color={colors.white} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Submit Visit Report</Text>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Submit Visit Report</Text>
           </TouchableOpacity>
         )}
       </View>

@@ -33,7 +33,7 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, flex: 1 }}>Asset Details</Text>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, flex: 1 }}>Asset Details</Text>
       </View>
 
       <Card variant="soft" style={{ backgroundColor: colors.text, marginBottom: spacing.xl }}>
@@ -45,11 +45,11 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
               </View>
               <Badge label={appliance.status} type={appliance.status as any} />
             </View>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white, marginTop: spacing.lg }}>{appliance.name}</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.white, marginTop: spacing.lg }}>{appliance.name}</Text>
             <Text style={{ fontSize: fontSize.sm, color: colors.slate300, marginTop: spacing.xs }}>{appliance.category} | {appliance.zone}</Text>
           </View>
           <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: healthColor + "30", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: healthColor === colors.success ? colors.emerald200 : healthColor === colors.warning ? colors.amber200 : colors.rose200 }}>{appliance.healthScore}%</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: healthColor === colors.success ? colors.emerald200 : healthColor === colors.warning ? colors.amber200 : colors.rose200 }}>{appliance.healthScore}%</Text>
           </View>
         </View>
       </Card>
@@ -57,17 +57,17 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginBottom: spacing.xl }}>
         <View style={{ flex: 1, minWidth: 100, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Shield size={16} color={colors.brand} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{appliance.healthScore}%</Text>
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{appliance.healthScore}%</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Health</Text>
         </View>
         <View style={{ flex: 1, minWidth: 100, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <DollarSign size={16} color={colors.warning} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{formatMoney(appliance.purchaseCost)}</Text>
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{formatMoney(appliance.purchaseCost)}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Cost</Text>
         </View>
         <View style={{ flex: 1, minWidth: 100, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Calendar size={16} color={colors.success} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{appliance.warranty}</Text>
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{appliance.warranty}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Warranty</Text>
         </View>
       </View>
@@ -78,12 +78,12 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Wrench size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Asset Information</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Asset Information</Text>
           </View>
           <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl, marginBottom: spacing.md }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.sm }}>
               <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Health score</Text>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{appliance.healthScore}%</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{appliance.healthScore}%</Text>
             </View>
             <ProgressBar value={appliance.healthScore} color={healthColor} />
           </View>
@@ -101,7 +101,7 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180 }}>{row.value}</Text>
+                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180 }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -112,7 +112,7 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Calendar size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Service History</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Service History</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             {[
@@ -125,7 +125,7 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{row.value}</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -136,7 +136,7 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Truck size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Vendor & Maintenance</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Vendor & Maintenance</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: colors.slate50, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md }}>
@@ -144,21 +144,21 @@ export function ApplianceDetailScreen({ applianceId, onBack }: Props) {
                 <Truck size={14} color={colors.textSecondary} strokeWidth={2} />
                 <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>AMC vendor</Text>
               </View>
-              <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 160 }}>{appliance.amcVendor}</Text>
+              <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 160 }}>{appliance.amcVendor}</Text>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: colors.slate50, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
                 <FileText size={14} color={colors.textSecondary} strokeWidth={2} />
                 <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Approval status</Text>
               </View>
-              <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 160 }}>{appliance.approvalStatus}</Text>
+              <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 160 }}>{appliance.approvalStatus}</Text>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: colors.slate50, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
                 <Wrench size={14} color={colors.textSecondary} strokeWidth={2} />
                 <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Pending parts</Text>
               </View>
-              <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 160 }}>{appliance.pendingParts}</Text>
+              <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 160 }}>{appliance.pendingParts}</Text>
             </View>
           </View>
         </Card>

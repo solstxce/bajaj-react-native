@@ -31,7 +31,7 @@ export function Toast() {
         top: Platform.OS === "ios" ? 54 : 44,
         right: 16,
         zIndex: 60,
-        borderRadius: 14,
+        borderRadius: 16,
         backgroundColor: colors.text,
         paddingHorizontal: 16,
         paddingVertical: 12,
@@ -40,7 +40,7 @@ export function Toast() {
         ...shadows.modal,
       }}
     >
-      <Text style={{ fontSize: fontSize.sm, fontWeight: "500", color: colors.white }}>{state.toast}</Text>
+      <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>{state.toast}</Text>
     </Animated.View>
   );
 }

@@ -48,7 +48,7 @@ export function SearchModal({ visible, onClose, onSelectResult }: Props) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableOpacity activeOpacity={1} onPress={onClose} style={{ flex: 1, backgroundColor: "rgba(15,23,42,0.5)", justifyContent: "flex-start", paddingTop: 80, paddingHorizontal: spacing.xl }}>
-        <Animated.View style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], opacity, transform: [{ translateY }], ...shadows.modal }}>
+        <Animated.View style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], opacity, transform: [{ translateY }], borderWidth: 1, borderColor: "rgba(255,255,255,0.6)", ...shadows.modal }}>
           <TouchableOpacity activeOpacity={1} onPress={() => {}}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border }}>
               <Search size={16} color={colors.textSecondary} strokeWidth={1.8} />
@@ -122,7 +122,7 @@ function renderGroup(
     <View style={{ marginBottom: spacing.sm }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}>
         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: accentColor }} />
-        <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{label} ({items.length})</Text>
+        <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{label} ({items.length})</Text>
       </View>
       {items.slice(0, 5).map((item: any) => {
         const data = getItem(item.id);
@@ -134,7 +134,7 @@ function renderGroup(
             style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.md, paddingVertical: spacing.lg, borderRadius: borderRadius["2xl"], gap: spacing.sm }}
           >
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }} numberOfLines={1}>{data.title}</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }} numberOfLines={1}>{data.title}</Text>
               <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }} numberOfLines={1}>{data.subtitle}</Text>
             </View>
             <Badge label={data.badge} type={data.badge} />

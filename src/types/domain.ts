@@ -1,4 +1,4 @@
-export type RoleId = "worker" | "am" | "branchManager" | "rm";
+export type RoleId = "lc" | "branchManager" | "rm";
 
 export type Priority = "Critical" | "High" | "Medium" | "Low";
 
@@ -195,13 +195,18 @@ export type AttendanceLog = {
   location: string;
   proof: string;
   deviation: string;
+  weeklyTasks?: WeeklyTaskItem[];
+};
+
+export type WeeklyTaskItem = {
+  id: string;
+  description: string;
+  estimatedHours: number;
 };
 
 export type TabState = {
-  workerTasks: string;
-
-  amTasks: string;
-  amBranch: string;
+  lcTasks: string;
+  lcBranch: string;
   managerMonitoring: string;
   managerIssues: string;
   approvals: string;

@@ -15,11 +15,11 @@ export function Card({ children, variant = "soft", style }: Props) {
       style={[
         {
           backgroundColor: isGlass ? colors.cardGlass : colors.card,
-          borderRadius: borderRadius.xl,
+          borderRadius: 24,
           borderWidth: 1,
           borderColor: isGlass ? "rgba(255,255,255,0.6)" : colors.border,
-          padding: 16,
-          ...(isGlass ? shadows.card : shadows.shell),
+          padding: 20,
+          ...(isGlass ? shadows.shell : shadows.card),
         },
         style,
       ]}

@@ -1,16 +1,24 @@
 import { Platform, ViewStyle } from "react-native";
 
 export const headingFont = Platform.select({
-  ios: "SF Pro Display",
-  android: "sans-serif",
-  default: "System",
+  ios: "Manrope",
+  android: "sans-serif-medium",
+  default: "Manrope",
 });
 
 export const bodyFont = Platform.select({
-  ios: "SF Pro Text",
+  ios: "Manrope",
   android: "sans-serif",
-  default: "System",
+  default: "Manrope",
 });
+
+export const fontWeight = {
+  regular: "400" as const,
+  medium: "500" as const,
+  semibold: "600" as const,
+  bold: "700" as const,
+  extrabold: "800" as const,
+};
 
 export const colors = {
   brand: "#005BAC",
@@ -94,15 +102,15 @@ export const spacing = {
 };
 
 export const borderRadius = {
-  sm: 8,
-  md: 12,
-  lg: 14,
-  xl: 16,
-  "2xl": 18,
-  "3xl": 20,
-  "4xl": 24,
-  "5xl": 26,
-  "6xl": 28,
+  sm: 10,
+  md: 14,
+  lg: 16,
+  xl: 18,
+  "2xl": 20,
+  "3xl": 22,
+  "4xl": 26,
+  "5xl": 28,
+  "6xl": 30,
   full: 9999,
 };
 
@@ -129,7 +137,11 @@ export const shadows: Record<string, ViewStyle> = {
     default: { shadowColor: "rgba(0,91,172,0.06)", shadowOffset: { width: 0, height: 20 }, shadowOpacity: 1, shadowRadius: 60, elevation: 8 },
   }),
   modal: Platform.select({
-    web: { boxShadow: "0 8px 30px rgba(0,0,0,0.15)" },
-    default: { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 30, elevation: 12 },
+    web: { boxShadow: "0 8px 30px rgba(0,0,0,0.18)" },
+    default: { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.18, shadowRadius: 30, elevation: 12 },
+  }),
+  tabBar: Platform.select({
+    web: { boxShadow: "0 -4px 20px rgba(0,0,0,0.1)" },
+    default: { shadowColor: "#000", shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 20, elevation: 10 },
   }),
 };

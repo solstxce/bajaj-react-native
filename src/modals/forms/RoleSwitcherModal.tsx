@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Modal, ScrollView } from "react-native";
-import { HardHat, UserCog, Briefcase, Crown, X, Check } from "lucide-react-native";
+import { UserCog, Briefcase, Crown, X, Check } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
 import { ROLES } from "../../data/mockData";
 import { RoleId } from "../../types/domain";
-import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
+import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
 
 interface Props {
   visible: boolean;
@@ -12,15 +12,13 @@ interface Props {
 }
 
 const roleIconMap: Record<string, React.ComponentType<any>> = {
-  worker: HardHat,
-  am: UserCog,
+  lc: UserCog,
   branchManager: Briefcase,
   rm: Crown,
 };
 
 const roleAccentMap: Record<string, string> = {
-  worker: colors.brandSecondary,
-  am: colors.success,
+  lc: colors.success,
   branchManager: colors.brandDeep,
   rm: colors.brand,
 };
@@ -35,9 +33,9 @@ export function RoleSwitcherModal({ visible, onClose }: Props) {
         onPress={onClose}
         style={{ flex: 1, backgroundColor: "rgba(15,23,42,0.5)", justifyContent: "center", alignItems: "center", padding: spacing.xl }}
       >
-        <TouchableOpacity activeOpacity={1} onPress={() => {}} style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], padding: spacing.xl, width: "100%", maxWidth: 320 }}>
+        <TouchableOpacity activeOpacity={1} onPress={() => {}} style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], padding: spacing.xl, width: "100%", maxWidth: 320, borderWidth: 1, borderColor: "rgba(255,255,255,0.6)", ...shadows.modal }}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl, paddingHorizontal: spacing.sm }}>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Switch Role</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Switch Role</Text>
             <TouchableOpacity onPress={onClose} style={{ padding: spacing.sm }}>
               <X size={16} color={colors.textSecondary} />
             </TouchableOpacity>
@@ -67,7 +65,7 @@ export function RoleSwitcherModal({ visible, onClose }: Props) {
                     <Icon size={20} color={colors.white} strokeWidth={1.8} />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{r.name}</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{r.name}</Text>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{r.short}</Text>
                   </View>
                   {active ? (

@@ -53,7 +53,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, flex: 1 }}>Branch Details</Text>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, flex: 1 }}>Branch Details</Text>
       </View>
 
       <Card variant="soft" style={{ backgroundColor: colors.text, marginBottom: spacing.xl }}>
@@ -64,8 +64,8 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
                 <Building size={20} color={colors.brand} strokeWidth={2} />
               </View>
               <View>
-                <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.slate300, textTransform: "uppercase" }}>{branch.code}</Text>
-                <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white }}>{branch.name}</Text>
+                <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.slate300, textTransform: "uppercase" }}>{branch.code}</Text>
+                <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.white }}>{branch.name}</Text>
               </View>
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.sm }}>
@@ -74,7 +74,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             </View>
           </View>
           <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: branch.health >= 90 ? colors.emerald500 + "30" : branch.health >= 80 ? colors.amber500 + "30" : colors.rose500 + "30", alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: branch.health >= 90 ? colors.emerald200 : branch.health >= 80 ? colors.amber200 : colors.rose200 }}>{branch.health}%</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: branch.health >= 90 ? colors.emerald200 : branch.health >= 80 ? colors.amber200 : colors.rose200 }}>{branch.health}%</Text>
           </View>
         </View>
       </Card>
@@ -92,33 +92,33 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Users size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Staff Overview</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Staff Overview</Text>
             <Badge label={branch.staffCount + " total"} type="Info" />
           </View>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
             <View style={{ flex: 1, minWidth: 100, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.lg }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                 <HardHat size={16} color={colors.brandSecondary} />
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.textSecondary }}>Workers</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.textSecondary }}>Staff</Text>
               </View>
-              <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: colors.text, marginTop: spacing.sm }}>{branch.workerCount}</Text>
+              <Text style={{ fontSize: fontSize["4xl"], fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{branch.staffCount}</Text>
             </View>
           </View>
           <View style={{ marginTop: spacing.md, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.lg, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
               <Users size={16} color={colors.text} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.textSecondary }}>Present today</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.textSecondary }}>Present today</Text>
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{todayPresent} of {todayTotal}</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>{todayPresent} of {todayTotal}</Text>
           </View>
           {workers.slice(0, 3).map((user) => (
             <View key={user.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: colors.slate50, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginTop: spacing.sm }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
                 <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
-                  <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.brand }}>{user.name.charAt(0)}</Text>
+                  <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.brand }}>{user.name.charAt(0)}</Text>
                 </View>
                 <View>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{user.name}</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{user.name}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{user.position}</Text>
                 </View>
               </View>
@@ -132,16 +132,16 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.warning + "15", alignItems: "center", justifyContent: "center" }}>
               <DollarSign size={16} color={colors.warning} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Budget & Finance</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Budget & Finance</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Monthly budget</Text>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{formatMoney(branch.monthlyBudget)}</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{formatMoney(branch.monthlyBudget)}</Text>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Used</Text>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{formatMoney(branch.usedBudget)}</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{formatMoney(branch.usedBudget)}</Text>
             </View>
             <ProgressBar value={budgetPct} color={budgetPct > 85 ? colors.error : budgetPct > 70 ? colors.warning : colors.success} />
             <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{budgetPct}% utilised</Text>
@@ -152,23 +152,23 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
                 <BarChart3 size={14} color={colors.brand} />
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Revenue index</Text>
               </View>
-              <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, marginTop: spacing.xs }}>{branch.revenueIndex}</Text>
+              <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, marginTop: spacing.xs }}>{branch.revenueIndex}</Text>
             </View>
             <View style={{ flex: 1, minWidth: 100, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.lg }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                 <Users size={14} color={colors.success} />
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Footfall</Text>
               </View>
-              <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, marginTop: spacing.xs }}>{branch.customerFootfall}</Text>
+              <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, marginTop: spacing.xs }}>{branch.customerFootfall}</Text>
             </View>
           </View>
           {branchApprovals.length > 0 && (
             <View style={{ marginTop: spacing.xl }}>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, marginBottom: spacing.sm }}>Pending approvals</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, marginBottom: spacing.sm }}>Pending approvals</Text>
               {branchApprovals.filter((a) => a.status === "Pending").slice(0, 2).map((a) => (
                 <View key={a.id} style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: colors.amber50, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginTop: spacing.sm }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{a.title}</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{a.title}</Text>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{formatMoney(a.amount)}</Text>
                   </View>
                   <Badge label={a.priority} type={a.priority} />
@@ -183,7 +183,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.error + "15", alignItems: "center", justifyContent: "center" }}>
               <TriangleAlert size={16} color={colors.error} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Alerts & Issues</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Alerts & Issues</Text>
             <Badge label={openComplaints + " open"} type="Warning" />
           </View>
           <View style={{ gap: spacing.md }}>
@@ -191,7 +191,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
               <View key={c.id} style={{ backgroundColor: c.status === "Escalated" ? colors.rose50 : c.status === "Pending" ? colors.amber50 : colors.emerald50, borderRadius: borderRadius.lg, padding: spacing.xl, flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
                 {c.status === "Escalated" ? <TriangleAlert size={16} color={colors.rose700} strokeWidth={2} style={{ marginTop: 2 }} /> : c.status === "Pending" ? <AlertCircle size={16} color={colors.amber700} strokeWidth={2} style={{ marginTop: 2 }} /> : <CheckCircle2 size={16} color={colors.emerald700} strokeWidth={2} style={{ marginTop: 2 }} />}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: c.status === "Escalated" ? colors.rose700 : c.status === "Pending" ? colors.amber700 : colors.emerald700 }}>{c.title}</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: c.status === "Escalated" ? colors.rose700 : c.status === "Pending" ? colors.amber700 : colors.emerald700 }}>{c.title}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: c.status === "Escalated" ? colors.rose700 : c.status === "Pending" ? colors.amber700 : colors.emerald700, marginTop: spacing.xs }}>{c.type} | {c.assignedVendor}</Text>
                 </View>
                 <Badge label={c.status} type={c.status as any} />
@@ -208,7 +208,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brandSecondary + "15", alignItems: "center", justifyContent: "center" }}>
               <Wrench size={16} color={colors.brandSecondary} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Appliance Status</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Appliance Status</Text>
             <Badge label={criticalAppliances + " critical"} type="Error" />
           </View>
           <View style={{ gap: spacing.md }}>
@@ -219,7 +219,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
                     {app.status === "Operational" ? <Zap size={14} color={colors.success} strokeWidth={2} /> : app.status === "At Risk" ? <TriangleAlert size={14} color={colors.warning} strokeWidth={2} /> : <XCircle size={14} color={colors.error} strokeWidth={2} />}
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{app.name}</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{app.name}</Text>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{app.category} | {app.zone}</Text>
                   </View>
                 </View>
@@ -240,19 +240,19 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Clock size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Task Summary</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Task Summary</Text>
           </View>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
             <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.lg, alignItems: "center" }}>
-              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.text }}>{branchTasks.length}</Text>
+              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.text }}>{branchTasks.length}</Text>
               <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Total</Text>
             </View>
             <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.amber50, borderRadius: borderRadius.lg, padding: spacing.lg, alignItems: "center" }}>
-              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.amber700 }}>{pendingTasks}</Text>
+              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.amber700 }}>{pendingTasks}</Text>
               <Text style={{ fontSize: fontSize.xs, color: colors.amber700 }}>Pending</Text>
             </View>
             <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.emerald50, borderRadius: borderRadius.lg, padding: spacing.lg, alignItems: "center" }}>
-              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.emerald700 }}>{completedTasks}</Text>
+              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.emerald700 }}>{completedTasks}</Text>
               <Text style={{ fontSize: fontSize.xs, color: colors.emerald700 }}>Done</Text>
             </View>
           </View>
@@ -263,7 +263,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Building size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Branch Info</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Branch Info</Text>
           </View>
           <View style={{ gap: spacing.md }}>
             {[
@@ -279,7 +279,7 @@ export function BranchDetailScreen({ branchId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180 }}>{row.value}</Text>
+                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180 }}>{row.value}</Text>
               </View>
             ))}
           </View>

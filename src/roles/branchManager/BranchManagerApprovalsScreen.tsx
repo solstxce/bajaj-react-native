@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { CheckCircle, XCircle, Clock, Stamp, DollarSign } from "lucide-react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import { CheckCircle, XCircle, Clock, Stamp, DollarSign, Search, Calendar } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
 import { StatCard } from "../../shared/components/StatCard";
@@ -13,14 +13,22 @@ import { formatMoney } from "../../utils/helpers";
 
 export function BranchManagerApprovalsScreen() {
   const { state, setTab, scopedApprovals, getBranch, approveRequest, rejectRequest } = useApp();
-  const activeTab = state.tabs.approvals;
+  const activeTab = state.tabs.approvals || "pending";
+  const [searchQuery, setSearchQuery] = useState("");
+  const [fromDate, setFromDate] = useState("2026-04-20");
+  const [toDate, setToDate] = useState("2026-04-26");
 
-  const filteredApprovals = scopedApprovals.filter((a) => {
+  const statusFiltered = scopedApprovals.filter((a) => {
     if (activeTab === "pending") return a.status === "Pending";
     if (activeTab === "approved") return a.status === "Approved";
     if (activeTab === "rejected") return a.status === "Rejected";
     return true;
   });
+
+  const filteredApprovals = statusFiltered.filter(a => 
+    a.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    a.kind.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const pendingCount = scopedApprovals.filter((a) => a.status === "Pending").length;
   const approvedCount = scopedApprovals.filter((a) => a.status === "Approved").length;
@@ -43,10 +51,25 @@ export function BranchManagerApprovalsScreen() {
         }
       />
 
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
-        <View style={{ flex: 1, minWidth: 90 }}><StatCard label="Pending" value={String(pendingCount)} meta="Awaiting decision" accent={colors.warning} icon={Clock} /></View>
-        <View style={{ flex: 1, minWidth: 90 }}><StatCard label="Approved" value={String(approvedCount)} meta="Approved requests" accent={colors.success} icon={CheckCircle} /></View>
-        <View style={{ flex: 1, minWidth: 90 }}><StatCard label="Rejected" value={String(rejectedCount)} meta="Declined requests" accent={colors.error} icon={XCircle} /></View>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.xl }}>
+        <View style={{ flex: 2, minWidth: 200, flexDirection: "row", alignItems: "center", backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.border }}>
+          <Search size={16} color={colors.slate400} />
+          <TextInput 
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search approvals..." 
+            placeholderTextColor={colors.slate400}
+            style={{ flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, color: colors.slate900, fontSize: fontSize.sm }} 
+          />
+        </View>
+        <View style={{ flex: 1, minWidth: 140, flexDirection: "row", alignItems: "center", backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.border }}>
+          <Calendar size={16} color={colors.slate400} />
+          <TextInput value={fromDate} onChangeText={setFromDate} placeholder="From" style={{ flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, color: colors.slate900, fontSize: fontSize.sm }} />
+        </View>
+        <View style={{ flex: 1, minWidth: 140, flexDirection: "row", alignItems: "center", backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.border }}>
+          <Calendar size={16} color={colors.slate400} />
+          <TextInput value={toDate} onChangeText={setToDate} placeholder="To" style={{ flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, color: colors.slate900, fontSize: fontSize.sm }} />
+        </View>
       </View>
 
       <View style={{ marginTop: spacing.xl }}>
@@ -55,7 +78,7 @@ export function BranchManagerApprovalsScreen() {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.warning + "15", alignItems: "center", justifyContent: "center" }}>
               <Stamp size={16} color={colors.warning} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>
               {activeTab === "pending" ? "Pending Requests" : activeTab === "approved" ? "Approved Requests" : "Rejected Requests"}
             </Text>
           </View>
@@ -69,9 +92,9 @@ export function BranchManagerApprovalsScreen() {
                       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center" }}>
                         <Badge label={a.status} type={a.status} />
                         <Badge label={a.priority} type={a.priority} />
-                        <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase" }}>{a.kind}</Text>
+                        <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.textSecondary, textTransform: "uppercase" }}>{a.kind}</Text>
                       </View>
-                      <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.lg }}>{a.title}</Text>
+                      <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginTop: spacing.lg }}>{a.title}</Text>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.xs }}>
                         <DollarSign size={12} color={colors.textSecondary} />
                         <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{branch?.name} | {formatMoney(a.amount)} | Stage: {a.stage}</Text>
@@ -83,11 +106,11 @@ export function BranchManagerApprovalsScreen() {
                     <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.xl }}>
                       <TouchableOpacity onPress={() => approveRequest(a.id)} style={{ backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                         <CheckCircle size={14} color={colors.white} strokeWidth={2} />
-                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Approve</Text>
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Approve</Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => rejectRequest(a.id)} style={{ backgroundColor: colors.error, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                         <XCircle size={14} color={colors.white} strokeWidth={2} />
-                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Reject</Text>
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Reject</Text>
                       </TouchableOpacity>
                     </View>
                   ) : null}

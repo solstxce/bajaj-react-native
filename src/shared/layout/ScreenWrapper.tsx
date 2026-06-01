@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useRef } from "react";
 import { View, ScrollView, StyleSheet, Animated } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { colors, spacing } from "../../theme/theme";
 
 interface Props {
@@ -38,6 +39,13 @@ export function ScreenWrapper({ children, scroll = true }: Props) {
 
   return (
     <View style={styles.root}>
+      <LinearGradient
+        colors={["#E6F3FF", "#F4F8FC", "#EEF2F7"]}
+        locations={[0, 0.4, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
       {content}
     </View>
   );
@@ -46,7 +54,7 @@ export function ScreenWrapper({ children, scroll = true }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: "#EEF2F7",
   },
   scrollContent: {
     padding: spacing.xl,

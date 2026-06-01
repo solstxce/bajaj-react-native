@@ -30,8 +30,7 @@ export function toneClass(type: string) {
 
 export function roleAccent(role: RoleId): { bg: string; text: string } {
   const map: Record<RoleId, string> = {
-    worker: colors.brandSecondary,
-    am: colors.success,
+    lc: colors.success,
     branchManager: colors.brandDeep,
     rm: colors.brand,
   };
@@ -40,8 +39,7 @@ export function roleAccent(role: RoleId): { bg: string; text: string } {
 
 export function roleIcon(role: RoleId): string {
   const map: Record<RoleId, string> = {
-    worker: "HardHat",
-    am: "UserCog",
+    lc: "UserCog",
     branchManager: "Briefcase",
     rm: "Crown",
   };
@@ -51,7 +49,7 @@ export function roleIcon(role: RoleId): string {
 export function pageIcon(pageId: string): string {
   const map: Record<string, string> = {
     home: "Home",
-    dashboard: "BarChart3",
+    dashboard: "Home",
     tasks: "ListChecks",
     complaints: "Wrench",
     issues: "AlertCircle",

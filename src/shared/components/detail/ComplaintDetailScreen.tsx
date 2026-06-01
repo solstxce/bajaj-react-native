@@ -32,7 +32,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, flex: 1 }}>Issue Details</Text>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, flex: 1 }}>Issue Details</Text>
       </View>
 
       <Card variant="soft" style={{ backgroundColor: colors.text, marginBottom: spacing.xl }}>
@@ -42,7 +42,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
               <Badge label={complaint.status} type={complaint.status as any} />
               <Badge label={complaint.priority} type={complaint.priority} />
             </View>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white, marginTop: spacing.lg }}>{complaint.title}</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.white, marginTop: spacing.lg }}>{complaint.title}</Text>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.sm }}>
               <MapPin size={14} color={colors.slate300} strokeWidth={2} />
               <Text style={{ fontSize: fontSize.sm, color: colors.slate300 }}>{branch?.name}</Text>
@@ -57,17 +57,17 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginBottom: spacing.xl }}>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <DollarSign size={16} color={colors.brand} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{formatMoney(complaint.estimatedCost)}</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{formatMoney(complaint.estimatedCost)}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Est. cost</Text>
         </View>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Shield size={16} color={colors.warning} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{complaint.escalationStage}</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{complaint.escalationStage}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Stage</Text>
         </View>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Truck size={16} color={colors.brandSecondary} strokeWidth={2} />
-          <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{complaint.assignedVendor.split(" ")[0]}</Text>
+          <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{complaint.assignedVendor.split(" ")[0]}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Vendor</Text>
         </View>
       </View>
@@ -78,7 +78,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Wrench size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Issue Information</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Issue Information</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             {[
@@ -94,7 +94,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
+                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -105,7 +105,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <FileText size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Description</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Description</Text>
           </View>
           <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl }}>
             <Text style={{ fontSize: fontSize.sm, color: colors.text, lineHeight: 20 }}>{complaint.description}</Text>
@@ -117,13 +117,13 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <MessageSquare size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Timeline</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Timeline</Text>
           </View>
           <View style={{ gap: spacing.md }}>
             {complaint.timeline.map((entry, i) => (
               <View key={i} style={{ backgroundColor: i === complaint.timeline.length - 1 ? colors.brandLight : colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl, flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
                 <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: i === complaint.timeline.length - 1 ? colors.brand : colors.slate300, alignItems: "center", justifyContent: "center", marginTop: 2 }}>
-                  <Text style={{ fontSize: 10, fontWeight: "700", color: colors.white }}>{i + 1}</Text>
+                  <Text style={{ fontSize: 10, fontWeight: "400", color: colors.white }}>{i + 1}</Text>
                 </View>
                 <Text style={{ fontSize: fontSize.sm, color: i === complaint.timeline.length - 1 ? colors.text : colors.textSecondary, flex: 1 }}>{entry}</Text>
               </View>
@@ -136,7 +136,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Truck size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Vendor & Cost</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Vendor & Cost</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             {[
@@ -149,7 +149,7 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180 }}>{row.value}</Text>
+                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180 }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -159,15 +159,15 @@ export function ComplaintDetailScreen({ complaintId, onBack }: Props) {
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
             <TouchableOpacity onPress={() => resolveComplaint(complaint.id)} style={{ backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <CheckCircle2 size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Resolve</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Resolve</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => escalateComplaint(complaint.id)} style={{ backgroundColor: colors.error, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <ArrowUpRight size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Escalate</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Escalate</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => assignVendor(complaint.id)} style={{ backgroundColor: colors.brandSecondary, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <Truck size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Assign</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Assign</Text>
             </TouchableOpacity>
           </View>
         )}

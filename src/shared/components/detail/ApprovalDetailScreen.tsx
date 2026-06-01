@@ -31,7 +31,7 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, flex: 1 }}>Approval Details</Text>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, flex: 1 }}>Approval Details</Text>
       </View>
 
       <Card variant="soft" style={{ backgroundColor: colors.text, marginBottom: spacing.xl }}>
@@ -42,14 +42,14 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
               <Badge label={approval.priority} type={approval.priority} />
               <Badge label={approval.kind} type={approval.priority} />
             </View>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white, marginTop: spacing.lg }}>{approval.title}</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.white, marginTop: spacing.lg }}>{approval.title}</Text>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.sm }}>
               <Building size={14} color={colors.slate300} strokeWidth={2} />
               <Text style={{ fontSize: fontSize.sm, color: colors.slate300 }}>{branch?.name || "Branch " + approval.branchId}</Text>
             </View>
           </View>
           <View style={{ alignItems: "flex-end" }}>
-            <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: colors.white }}>{formatMoney(approval.amount)}</Text>
+            <Text style={{ fontSize: fontSize["4xl"], fontWeight: "400", color: colors.white }}>{formatMoney(approval.amount)}</Text>
             <Text style={{ fontSize: fontSize.xs, color: colors.slate300, marginTop: spacing.xs }}>Requested amount</Text>
           </View>
         </View>
@@ -58,17 +58,17 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginBottom: spacing.xl }}>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <DollarSign size={16} color={colors.brand} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{formatMoney(approval.amount)}</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{formatMoney(approval.amount)}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Amount</Text>
         </View>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Clock size={16} color={colors.warning} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{approval.age}</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{approval.age}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Age</Text>
         </View>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Shield size={16} color={colors.brandSecondary} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{approval.stage}</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{approval.stage}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Stage</Text>
         </View>
       </View>
@@ -79,7 +79,7 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <Stamp size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Request Information</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Request Information</Text>
           </View>
           <View style={{ gap: spacing.sm }}>
             {[
@@ -98,7 +98,7 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
+                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -109,7 +109,7 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <MessageSquare size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Notes</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Notes</Text>
           </View>
           <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl }}>
             <Text style={{ fontSize: fontSize.sm, color: colors.text, lineHeight: 20 }}>{approval.note}</Text>
@@ -120,11 +120,11 @@ export function ApprovalDetailScreen({ approvalId, onBack }: Props) {
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
             <TouchableOpacity onPress={() => approveRequest(approval.id)} style={{ backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <CheckCircle2 size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Approve</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Approve</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => rejectRequest(approval.id)} style={{ backgroundColor: colors.error, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <XCircle size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Reject</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Reject</Text>
             </TouchableOpacity>
           </View>
         )}

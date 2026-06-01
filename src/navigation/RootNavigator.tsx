@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { View, SafeAreaView } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, SafeAreaView, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
 import { Home, ListChecks, Wrench, MapPin, Bell, IdCard, BarChart3, AlertCircle, Building, LineChart, Stamp, Route, Satellite, TriangleAlert, Wallet, ChartColumn, Users, Sliders, Circle } from "lucide-react-native";
 import { useApp } from "../context/AppContext";
 import { ROLES } from "../data/mockData";
-import { colors, fontSize, spacing, borderRadius } from "../theme/theme";
+import { colors, fontSize, spacing, borderRadius, shadows } from "../theme/theme";
 import { pageIcon } from "../theme/styleMaps";
 import { TopBar } from "../shared/layout/TopBar";
 import { Toast } from "../shared/components/Toast";
@@ -15,21 +16,13 @@ import { DetailModal } from "../modals/detail/DetailModal";
 import { SearchModal } from "../modals/forms/SearchModal";
 import { PlaceholderScreen } from "./PlaceholderScreen";
 
-import { WorkerHomeScreen } from "../roles/worker/WorkerHomeScreen";
-import { WorkerTasksScreen } from "../roles/worker/WorkerTasksScreen";
-import { WorkerComplaintsScreen } from "../roles/worker/WorkerComplaintsScreen";
-import { WorkerAttendanceScreen } from "../roles/worker/WorkerAttendanceScreen";
-import { WorkerNotificationsScreen } from "../roles/worker/WorkerNotificationsScreen";
-import { WorkerProfileScreen } from "../roles/worker/WorkerProfileScreen";
-
-
-import { AmHomeScreen } from "../roles/am/AmHomeScreen";
-import { AmTasksScreen } from "../roles/am/AmTasksScreen";
-import { AmComplaintsScreen } from "../roles/am/AmComplaintsScreen";
-import { AmBranchScreen } from "../roles/am/AmBranchScreen";
-import { AmAttendanceScreen } from "../roles/am/AmAttendanceScreen";
-import { AmNotificationsScreen } from "../roles/am/AmNotificationsScreen";
-import { AmProfileScreen } from "../roles/am/AmProfileScreen";
+import { LcHomeScreen } from "../roles/lc/LcHomeScreen";
+import { LcTasksScreen } from "../roles/lc/LcTasksScreen";
+import { LcComplaintsScreen } from "../roles/lc/LcComplaintsScreen";
+import { LcBranchScreen } from "../roles/lc/LcBranchScreen";
+import { LcAttendanceScreen } from "../roles/lc/LcAttendanceScreen";
+import { LcNotificationsScreen } from "../roles/lc/LcNotificationsScreen";
+import { LcProfileScreen } from "../roles/lc/LcProfileScreen";
 
 import { BranchManagerHomeScreen } from "../roles/branchManager/BranchManagerHomeScreen";
 import { BranchManagerBranchesScreen } from "../roles/branchManager/BranchManagerBranchesScreen";
@@ -39,6 +32,7 @@ import { BranchManagerApprovalsScreen } from "../roles/branchManager/BranchManag
 import { BranchManagerVisitsScreen } from "../roles/branchManager/BranchManagerVisitsScreen";
 import { BranchManagerNotificationsScreen } from "../roles/branchManager/BranchManagerNotificationsScreen";
 import { BranchManagerProfileScreen } from "../roles/branchManager/BranchManagerProfileScreen";
+import { BranchManagerAttendanceScreen } from "../roles/branchManager/BranchManagerAttendanceScreen";
 
 import { RmDashboardScreen } from "../roles/rm/RmDashboardScreen";
 import { RmIntelligenceScreen } from "../roles/rm/RmIntelligenceScreen";
@@ -50,6 +44,7 @@ import { RmUsersScreen } from "../roles/rm/RmUsersScreen";
 import { RmSettingsScreen } from "../roles/rm/RmSettingsScreen";
 import { RmNotificationsScreen } from "../roles/rm/RmNotificationsScreen";
 import { RmProfileScreen } from "../roles/rm/RmProfileScreen";
+import { RmAttendanceScreen } from "../roles/rm/RmAttendanceScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -59,21 +54,13 @@ export function registerScreen(roleId: string, pageId: string, component: React.
   screenRegistry[roleId + "_" + pageId] = component;
 }
 
-registerScreen("worker", "home", WorkerHomeScreen);
-registerScreen("worker", "tasks", WorkerTasksScreen);
-registerScreen("worker", "complaints", WorkerComplaintsScreen);
-registerScreen("worker", "attendance", WorkerAttendanceScreen);
-registerScreen("worker", "notifications", WorkerNotificationsScreen);
-registerScreen("worker", "profile", WorkerProfileScreen);
-
-
-registerScreen("am", "home", AmHomeScreen);
-registerScreen("am", "tasks", AmTasksScreen);
-registerScreen("am", "complaints", AmComplaintsScreen);
-registerScreen("am", "branch", AmBranchScreen);
-registerScreen("am", "attendance", AmAttendanceScreen);
-registerScreen("am", "notifications", AmNotificationsScreen);
-registerScreen("am", "profile", AmProfileScreen);
+registerScreen("lc", "home", LcHomeScreen);
+registerScreen("lc", "tasks", LcTasksScreen);
+registerScreen("lc", "complaints", LcComplaintsScreen);
+registerScreen("lc", "branch", LcBranchScreen);
+registerScreen("lc", "attendance", LcAttendanceScreen);
+registerScreen("lc", "notifications", LcNotificationsScreen);
+registerScreen("lc", "profile", LcProfileScreen);
 
 registerScreen("branchManager", "home", BranchManagerHomeScreen);
 registerScreen("branchManager", "branches", BranchManagerBranchesScreen);
@@ -81,6 +68,7 @@ registerScreen("branchManager", "monitoring", BranchManagerMonitoringScreen);
 registerScreen("branchManager", "issues", BranchManagerIssuesScreen);
 registerScreen("branchManager", "approvals", BranchManagerApprovalsScreen);
 registerScreen("branchManager", "visits", BranchManagerVisitsScreen);
+registerScreen("branchManager", "attendance", BranchManagerAttendanceScreen);
 registerScreen("branchManager", "notifications", BranchManagerNotificationsScreen);
 registerScreen("branchManager", "profile", BranchManagerProfileScreen);
 
@@ -92,6 +80,7 @@ registerScreen("rm", "analytics", RmAnalyticsScreen);
 registerScreen("rm", "approvals", RmApprovalsScreen);
 registerScreen("rm", "users", RmUsersScreen);
 registerScreen("rm", "settings", RmSettingsScreen);
+registerScreen("rm", "attendance", RmAttendanceScreen);
 registerScreen("rm", "notifications", RmNotificationsScreen);
 registerScreen("rm", "profile", RmProfileScreen);
 
@@ -111,16 +100,32 @@ function TabIcon({ pageId, focused, color }: { pageId: string; focused: boolean;
   const Icon = iconMap[iconName] || Circle;
   return (
     <View style={{
-      width: 40,
-      height: 40,
-      borderRadius: borderRadius.md,
+      width: 44,
+      height: 32,
+      borderRadius: 12,
       backgroundColor: focused ? colors.brandLight : "transparent",
       alignItems: "center",
       justifyContent: "center",
     }}>
-      <Icon size={20} color={focused ? colors.brand : color} strokeWidth={focused ? 2 : 1.8} />
+      <Icon size={22} color={focused ? colors.brand : color} strokeWidth={focused ? 2.4 : 1.8} />
     </View>
   );
+}
+
+function NavigationSync() {
+  const { state } = useApp();
+  const navigation = useNavigation();
+  const prevPageRef = useRef(state.page);
+
+  useEffect(() => {
+    const prevPage = prevPageRef.current;
+    prevPageRef.current = state.page;
+    if (prevPage !== state.page) {
+      (navigation as any).navigate(state.page);
+    }
+  }, [state.page, navigation]);
+
+  return null;
 }
 
 function MainTabs() {
@@ -133,21 +138,47 @@ function MainTabs() {
       key={state.role}
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: true,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: colors.border,
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: colors.white,
+          borderTopColor: colors.slate200,
           borderTopWidth: 1,
-          height: 60,
-          paddingBottom: spacing.sm,
-          paddingTop: spacing.sm,
+          height: 84,
+          paddingTop: 12,
+          paddingBottom: 24,
+          elevation: 10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 6,
         },
         tabBarActiveTintColor: colors.brand,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600", marginTop: 2 },
-        tabBarItemStyle: { paddingVertical: spacing.xs },
+        tabBarLabelStyle: { 
+          fontSize: 9, 
+          fontWeight: "700", 
+          marginTop: 4,
+          textTransform: "uppercase",
+          letterSpacing: 0.6,
+        },
+        tabBarItemStyle: { 
+          height: 60,
+          marginHorizontal: 16,
+          paddingHorizontal: 0,
+        },
       }}
     >
-      {pages.slice(0, 5).map((page) => (
+      <Tab.Screen
+        name="__tabSync"
+        component={NavigationSync}
+        options={{ tabBarButton: () => null, headerShown: false }}
+      />
+      {pages.map((page, index) => (
         <Tab.Screen
           key={page.id}
           name={page.id}
@@ -156,6 +187,7 @@ function MainTabs() {
           options={{
             tabBarLabel: page.label,
             tabBarIcon: ({ focused, color }) => <TabIcon pageId={page.id} focused={focused} color={color} />,
+            ...(index >= 5 ? { tabBarButton: () => null } : {}),
           }}
         />
       ))}

@@ -30,20 +30,26 @@ export function QuickButton({ label, icon: Icon, onPress, tone }: Props) {
         onPressOut={handlePressOut}
         activeOpacity={0.85}
         style={{
-          borderRadius: borderRadius.lg,
+          borderRadius: 14,
           paddingHorizontal: spacing.xl,
-          paddingVertical: spacing.md,
-          backgroundColor: isDark ? colors.brand : colors.card,
+          height: 44,
+          backgroundColor: isDark ? colors.slate900 : colors.white,
           borderWidth: isDark ? 0 : 1,
           borderColor: colors.border,
           flexDirection: "row",
           alignItems: "center",
+          justifyContent: "center",
           gap: spacing.sm,
-          minHeight: 36,
+          minWidth: 100,
+          elevation: 2,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
         }}
       >
-        {Icon && <Icon size={14} color={isDark ? colors.white : colors.text} strokeWidth={2} />}
-        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: isDark ? colors.white : colors.text, letterSpacing: 0.2 }}>{label}</Text>
+        {Icon && <Icon size={18} color={isDark ? colors.white : colors.slate700} strokeWidth={2.2} />}
+        <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: isDark ? colors.white : colors.slate700 }}>{label}</Text>
       </TouchableOpacity>
     </Animated.View>
   );

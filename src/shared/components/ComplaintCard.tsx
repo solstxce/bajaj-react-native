@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Wrench, MapPin, DollarSign, TrendingUp, Calendar, Eye } from "lucide-react-native";
 import { Complaint } from "../../types/domain";
 import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
@@ -9,7 +8,7 @@ import { Badge } from "./Badge";
 
 interface Props {
   item: Complaint;
-  actions?: { label: string; onPress: () => void; primary?: boolean; danger?: boolean }[];
+  actions?: { label: string; onPress: () => void; primary?: boolean; danger?: boolean; warning?: boolean }[];
 }
 
 export function ComplaintCard({ item, actions }: Props) {
@@ -17,93 +16,56 @@ export function ComplaintCard({ item, actions }: Props) {
   const branch = getBranch(item.branchId);
 
   return (
-    <View style={{ backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, marginBottom: spacing.xl, ...shadows.card }}>
-      <View style={{ gap: spacing.xl }}>
+    <View style={{ backgroundColor: colors.white, borderRadius: 24, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, marginBottom: spacing.xl, ...shadows.card }}>
+      <View style={{ gap: spacing.lg }}>
         <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center" }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center", marginBottom: spacing.md }}>
             <Badge label={item.status} type={item.status} />
             <Badge label={item.priority} type={item.priority} />
-            <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase" }}>{item.type}</Text>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>{item.type}</Text>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "flex-start", gap: spacing.md, marginTop: spacing.lg }}>
-            <View style={{ width: 28, height: 28, borderRadius: borderRadius.md, backgroundColor: colors.error + "15", alignItems: "center", justifyContent: "center", marginTop: 2 }}>
-              <Wrench size={14} color={colors.error} strokeWidth={2} />
-            </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, flex: 1 }}>{item.title}</Text>
-          </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.xs, marginLeft: spacing.md + spacing.lg }}>
-            <MapPin size={12} color={colors.textSecondary} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{branch?.name} | {item.impact}</Text>
+          <View style={{ gap: spacing.xs }}>
+            <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.slate900 }}>{item.title}</Text>
+            <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{branch?.name} | {item.impact}</Text>
           </View>
 
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
-            <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-              <Wrench size={14} color={colors.textSecondary} strokeWidth={2} />
-              <View>
-                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Vendor</Text>
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{item.assignedVendor}</Text>
-              </View>
+            <View style={{ flex: 1, minWidth: 100 }}>
+              <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Vendor</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{item.assignedVendor}</Text>
             </View>
-            <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-              <DollarSign size={14} color={colors.textSecondary} strokeWidth={2} />
-              <View>
-                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Est. Cost</Text>
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{formatMoney(item.estimatedCost)}</Text>
-              </View>
+            <View style={{ flex: 1, minWidth: 100 }}>
+              <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Est. Cost</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{formatMoney(item.estimatedCost)}</Text>
             </View>
-            <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-              <TrendingUp size={14} color={colors.textSecondary} strokeWidth={2} />
-              <View>
-                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Escalation</Text>
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{item.escalationStage}</Text>
-              </View>
+            <View style={{ flex: 1, minWidth: 100 }}>
+              <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Escalation</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{item.escalationStage}</Text>
             </View>
-            <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-              <Calendar size={14} color={colors.textSecondary} strokeWidth={2} />
-              <View>
-                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Raised</Text>
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{item.createdAt}</Text>
-              </View>
+            <View style={{ flex: 1, minWidth: 100 }}>
+              <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Raised</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{item.createdAt}</Text>
             </View>
           </View>
         </View>
 
-        {actions && actions.length > 0 ? (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.lg }}>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+          <TouchableOpacity
+            onPress={() => openComplaintDetail(item.id)}
+            style={{ borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: colors.slate900, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
+          >
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>View detail</Text>
+          </TouchableOpacity>
+          {actions?.map((a, i) => (
             <TouchableOpacity
-              onPress={() => openComplaintDetail(item.id)}
-              style={{
-                borderRadius: borderRadius.lg,
-                paddingHorizontal: spacing.xl,
-                paddingVertical: spacing.md,
-                backgroundColor: colors.brand,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: spacing.sm,
-              }}
+              key={i}
+              onPress={a.onPress}
+              style={{ borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: a.danger ? colors.error : a.warning ? colors.warning : a.primary ? colors.success : colors.white, borderWidth: (a.danger || a.warning || a.primary) ? 0 : 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
             >
-              <Eye size={14} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Detail</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: (a.danger || a.warning || a.primary) ? colors.white : colors.slate700 }}>{a.label}</Text>
             </TouchableOpacity>
-            {actions.map((a, i) => (
-              <TouchableOpacity
-                key={i}
-                onPress={a.onPress}
-                style={{
-                  borderRadius: borderRadius.lg,
-                  paddingHorizontal: spacing.xl,
-                  paddingVertical: spacing.md,
-                  backgroundColor: a.danger ? colors.error : a.primary ? colors.success : colors.brand,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: spacing.sm,
-                }}
-              >
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>{a.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : null}
+          ))}
+        </View>
       </View>
     </View>
   );

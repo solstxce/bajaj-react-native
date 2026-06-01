@@ -42,7 +42,7 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, flex: 1 }}>Task Details</Text>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, flex: 1 }}>Task Details</Text>
       </View>
 
       <Card variant="soft" style={{ backgroundColor: colors.text, marginBottom: spacing.xl }}>
@@ -52,7 +52,7 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
               <Badge label={task.status} type={task.status as any} />
               <Badge label={task.priority} type={task.priority} />
             </View>
-            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.white, marginTop: spacing.lg }}>{task.title}</Text>
+            <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.white, marginTop: spacing.lg }}>{task.title}</Text>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.sm }}>
               <MapPin size={14} color={colors.slate300} strokeWidth={2} />
               <Text style={{ fontSize: fontSize.sm, color: colors.slate300 }}>{branch?.name} | {task.zone}</Text>
@@ -62,24 +62,24 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
             <Clock size={24} color={diff <= 0 ? colors.rose200 : colors.amber200} strokeWidth={2} />
           </View>
         </View>
-        <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: colors.white, marginTop: spacing.lg }}>{timeLeft}</Text>
+        <Text style={{ fontSize: fontSize["4xl"], fontWeight: "400", color: colors.white, marginTop: spacing.lg }}>{timeLeft}</Text>
         <Text style={{ fontSize: fontSize.sm, color: colors.slate300, marginTop: spacing.xs }}>Deadline: {task.deadline.replace("T", " ")}</Text>
       </Card>
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginBottom: spacing.xl }}>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <ListChecks size={16} color={colors.brand} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{task.checklistDone}/{task.checklistTotal}</Text>
+          <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{task.checklistDone}/{task.checklistTotal}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Checklist</Text>
         </View>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <Camera size={16} color={colors.success} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{task.proofRequired ? "Yes" : "No"}</Text>
+          <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{task.proofRequired ? "Yes" : "No"}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Proof req.</Text>
         </View>
         <View style={{ flex: 1, minWidth: 90, backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
           <ShieldAlert size={16} color={colors.warning} strokeWidth={2} />
-          <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.text, marginTop: spacing.sm }}>{minsLeft}</Text>
+          <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{minsLeft}</Text>
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Mins left</Text>
         </View>
       </View>
@@ -90,12 +90,12 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <ClipboardCheck size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Task Information</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Task Information</Text>
           </View>
           <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl, marginBottom: spacing.md }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.sm }}>
               <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Progress</Text>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{Math.round(pct)}%</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{Math.round(pct)}%</Text>
             </View>
             <ProgressBar value={pct} color={task.status === "Completed" ? colors.success : colors.warning} />
           </View>
@@ -113,7 +113,7 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
+                <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 180, textAlign: "right" }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -124,7 +124,7 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <FileText size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Notes & Instructions</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Notes & Instructions</Text>
           </View>
           <View style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.xl }}>
             <Text style={{ fontSize: fontSize.sm, color: colors.text, lineHeight: 20 }}>{task.notes}</Text>
@@ -137,7 +137,7 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
               <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.error + "15", alignItems: "center", justifyContent: "center" }}>
                 <RotateCcw size={16} color={colors.error} strokeWidth={2} />
               </View>
-              <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.error }}>Redo Required</Text>
+              <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.error }}>Redo Required</Text>
             </View>
             <View style={{ backgroundColor: colors.red50, borderRadius: borderRadius.lg, padding: spacing.xl, flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
               <AlertTriangle size={16} color={colors.red700} strokeWidth={2} style={{ marginTop: 2 }} />
@@ -151,12 +151,11 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
               <MessageSquare size={16} color={colors.brand} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Escalation Chain</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Escalation Chain</Text>
           </View>
           <View style={{ gap: spacing.md }}>
             {[
-              { level: "Worker", desc: "Submit geo proof or task stays pending.", color: colors.orange50, textColor: colors.orange700, icon: User },
-              { level: "AA", desc: "Gets notified once deadline risk starts.", color: colors.emerald50, textColor: colors.emerald700, icon: UserCheck },
+              { level: "LC", desc: "Submit geo proof or task stays pending.", color: colors.emerald50, textColor: colors.emerald700, icon: UserCheck },
               { level: "Branch Manager", desc: "Reviews repeated misses and calls branch.", color: colors.sky50, textColor: colors.sky700, icon: ShieldAlert },
               { level: "RM", desc: "Only for safety, audit or repeated failures.", color: colors.rose50, textColor: colors.rose700, icon: ArrowUpRight },
             ].map((step, i) => (
@@ -165,7 +164,7 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
                   <step.icon size={16} color={step.textColor} strokeWidth={2} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: step.textColor }}>{step.level}</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: step.textColor }}>{step.level}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: step.textColor, marginTop: spacing.xs }}>{step.desc}</Text>
                 </View>
               </View>
@@ -178,16 +177,16 @@ export function TaskDetailScreen({ taskId, onBack }: Props) {
             {task.audience === "worker" && (
               <TouchableOpacity onPress={() => submitTaskProof(task.id)} style={{ backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
                 <Camera size={16} color={colors.white} strokeWidth={2} />
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Submit Photo</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Submit Photo</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity onPress={() => markTaskDone(task.id)} style={{ backgroundColor: colors.brand, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <CheckCircle2 size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Mark Complete</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Mark Complete</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => revokeTask(task.id)} style={{ backgroundColor: colors.error, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
               <RotateCcw size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Revoke</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Revoke</Text>
             </TouchableOpacity>
           </View>
         )}

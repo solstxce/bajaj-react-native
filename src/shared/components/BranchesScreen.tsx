@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import {
   Building, TrendingUp, Users, Clock, AlertCircle, TriangleAlert,
   ShieldCheck, DollarSign, ChevronRight, BarChart3, Activity,
@@ -11,7 +11,7 @@ import { SegmentedControl } from "./SegmentedControl";
 import { Badge } from "./Badge";
 import { ProgressBar } from "./ProgressBar";
 import { useApp } from "../../context/AppContext";
-import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
+import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
 import { BranchDeepDiveScreen } from "./detail/BranchDeepDiveScreen";
 import { Branch } from "../../types/domain";
 
@@ -55,132 +55,115 @@ export function BranchesScreen() {
 
       {isRm && (
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xl }}>
-          <TouchableOpacity onPress={() => setFilterBranch(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !filterBranch ? colors.text : colors.slate100 }}>
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: !filterBranch ? colors.white : colors.textSecondary }}>All branches</Text>
+          <TouchableOpacity onPress={() => setFilterBranch(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !filterBranch ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: !filterBranch ? colors.white : colors.slate600 }}>All branches</Text>
           </TouchableOpacity>
           {scopedBranches.map((b) => (
-            <TouchableOpacity key={b.id} onPress={() => setFilterBranch(b.id)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: filterBranch === b.id ? colors.text : colors.slate100 }}>
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: filterBranch === b.id ? colors.white : colors.textSecondary }}>{b.name.split(" ")[0]}</Text>
+            <TouchableOpacity key={b.id} onPress={() => setFilterBranch(b.id)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: filterBranch === b.id ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: filterBranch === b.id ? colors.white : colors.slate600 }}>{b.name.split(" ")[0]}</Text>
             </TouchableOpacity>
           ))}
         </View>
       )}
 
-      <View style={{ gap: spacing.xl, marginTop: spacing.xl }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: spacing.xl, marginTop: spacing.xl, paddingBottom: 60 }}>
         {filtered.length === 0 ? (
           <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, textAlign: "center", paddingVertical: spacing["4xl"] }}>No branches found</Text>
         ) : filtered.map((branch) => {
           const budgetPct = Math.round((branch.usedBudget / branch.monthlyBudget) * 100);
-          const healthy = branch.health >= 90;
 
           return (
-            <View key={branch.id} style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], borderWidth: 1, borderColor: colors.border, padding: spacing["2xl"] }}>
+            <View key={branch.id} style={{ backgroundColor: colors.white, borderRadius: 24, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, ...shadows.card }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: spacing.md }}>
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                    <View style={{ width: 36, height: 36, borderRadius: borderRadius.md, backgroundColor: colors.brandLight, alignItems: "center", justifyContent: "center" }}>
-                      <Building size={18} color={colors.brand} strokeWidth={2} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 2 }}>{branch.code}</Text>
-                      <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.xs }}>{branch.name}</Text>
-                    </View>
+                <View style={{ flex: 1, flexDirection: "row", gap: spacing.lg }}>
+                  <View style={{ width: 48, height: 48, borderRadius: borderRadius["2xl"], backgroundColor: colors.slate50, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.border }}>
+                    <Building size={24} color={colors.slate700} strokeWidth={1.5} />
                   </View>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs, marginTop: spacing.sm }}>
-                    <MapPin size={10} color={colors.textSecondary} />
-                    <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, flex: 1 }}>{branch.city} · {branch.address}</Text>
-                  </View>
-                  {isRm && (
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.slate900 }}>{branch.name}</Text>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs, marginTop: spacing.xs }}>
-                      <TrendingUp size={10} color={colors.brandSecondary} />
-                      <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Revenue Index {branch.revenueIndex}</Text>
+                      <MapPin size={14} color={colors.slate400} />
+                      <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{branch.city} · {branch.address}</Text>
                     </View>
-                  )}
+                  </View>
                 </View>
-                <Badge label={healthy ? "Healthy" : "Watch"} type={healthy ? "Completed" : "High"} />
+                <Badge label={branch.code} type="Pending" />
               </View>
 
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
-                <View style={{ flex: 1, minWidth: 70, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
-                  <Activity size={12} color={colors.success} strokeWidth={2} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Health</Text>
-                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{formatPctShort(branch.health)}</Text>
-                </View>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl, backgroundColor: colors.slate50, borderRadius: borderRadius.xl, padding: spacing.lg }}>
                 {isRm ? (
-                  <View style={{ flex: 1, minWidth: 70, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
-                    <BarChart3 size={12} color={colors.brandSecondary} strokeWidth={2} />
-                    <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Performance</Text>
-                    <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.performance}%</Text>
+                  <View style={{ flex: 1, minWidth: 80 }}>
+                    <Text style={{ fontSize: fontSize.xs, color: colors.slate500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Performance</Text>
+                    <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.slate900 }}>{branch.performance}%</Text>
                   </View>
                 ) : (
-                  <View style={{ flex: 1, minWidth: 70, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
-                    <Users size={12} color={colors.brand} strokeWidth={2} />
-                    <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Staff</Text>
-                    <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.staffCount}</Text>
+                  <View style={{ flex: 1, minWidth: 80 }}>
+                    <Text style={{ fontSize: fontSize.xs, color: colors.slate500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Staff</Text>
+                    <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.slate900 }}>{branch.staffCount}</Text>
                   </View>
                 )}
-                <View style={{ flex: 1, minWidth: 70, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
-                  <Users size={12} color={colors.info} strokeWidth={2} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Attendance</Text>
-                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.todayAttendance}%</Text>
+                <View style={{ flex: 1, minWidth: 80 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Attendance</Text>
+                  <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.slate900 }}>{branch.todayAttendance}%</Text>
                 </View>
-                <View style={{ flex: 1, minWidth: 70, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
-                  <Clock size={12} color={colors.warning} strokeWidth={2} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>SLA</Text>
-                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.sla}%</Text>
+                <View style={{ flex: 1, minWidth: 80 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>SLA</Text>
+                  <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.slate900 }}>{branch.sla}%</Text>
                 </View>
-                <View style={{ flex: 1, minWidth: 70, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
-                  <AlertCircle size={12} color={colors.error} strokeWidth={2} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>Issues</Text>
-                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.openIssues}</Text>
+                <View style={{ flex: 1, minWidth: 80 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Issues</Text>
+                  <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: branch.openIssues > 0 ? colors.amber700 : colors.emerald600 }}>{branch.openIssues}</Text>
                 </View>
-              </View>
-
-              <View style={{ marginTop: spacing.lg }}>
-                <ProgressBar value={isRm && activeTab === "risk" ? 100 - branch.criticalAlerts * 15 : branch.health} color={branch.health >= 90 ? colors.success : branch.health >= 80 ? colors.warning : colors.error} />
               </View>
 
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.xl }}>
-                <TouchableOpacity onPress={() => openBranchDetail(branch.id)} style={{ backgroundColor: colors.card, borderRadius: borderRadius["2xl"], paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.border }}>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.textSecondary }}>Overview</Text>
+                <View style={{ flex: 1, minWidth: 100, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                  <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.red50, alignItems: "center", justifyContent: "center" }}>
+                    <TriangleAlert size={14} color={colors.error} />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: fontSize.xs, color: colors.slate500 }}>Critical Alerts</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{branch.criticalAlerts}</Text>
+                  </View>
+                </View>
+                <View style={{ flex: 1, minWidth: 100, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                  <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.amber50, alignItems: "center", justifyContent: "center" }}>
+                    <Wrench size={14} color={colors.amber700} />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: fontSize.xs, color: colors.slate500 }}>Appliance Risk</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{branch.applianceRisk}</Text>
+                  </View>
+                </View>
+                <View style={{ flex: 1, minWidth: 100, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                  <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.sky50, alignItems: "center", justifyContent: "center" }}>
+                    <DollarSign size={14} color={colors.sky600} />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: fontSize.xs, color: colors.slate500 }}>Budget Used</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{budgetPct}%</Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={{ borderTopWidth: 1, borderColor: colors.border, marginTop: spacing.xl, paddingTop: spacing.xl, flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
+                <TouchableOpacity onPress={() => openBranchDetail(branch.id)} style={{ flex: 1, minWidth: 120, backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.border, alignItems: "center" }}>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate700 }}>Overview</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setDeepDiveBranch(branch)} style={{ backgroundColor: colors.text, borderRadius: borderRadius["2xl"], paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.white }}>Deep Dive</Text>
+                <TouchableOpacity onPress={() => setDeepDiveBranch(branch)} style={{ flex: 1, minWidth: 120, backgroundColor: colors.slate900, borderRadius: borderRadius.lg, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm }}>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Deep Dive</Text>
                   <ChevronRight size={14} color={colors.white} strokeWidth={2} />
                 </TouchableOpacity>
                 {!isRm ? (
-                  <TouchableOpacity onPress={() => openFormModal("visit")} style={{ backgroundColor: colors.card, borderRadius: borderRadius["2xl"], paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.border }}>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.textSecondary }}>Schedule visit</Text>
+                  <TouchableOpacity onPress={() => openFormModal("visit")} style={{ backgroundColor: colors.sky50, borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, alignItems: "center", justifyContent: "center" }}>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.sky700 }}>Schedule</Text>
                   </TouchableOpacity>
                 ) : null}
-              </View>
-
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.lg }}>
-                <View style={{ flex: 1, minWidth: 60, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                  <ShieldCheck size={12} color={colors.success} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Staff: {branch.workerCount}W · {branch.employeeCount}E</Text>
-                </View>
-                <View style={{ flex: 1, minWidth: 60, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                  <TriangleAlert size={12} color={colors.error} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Critical: {branch.criticalAlerts}</Text>
-                </View>
-                <View style={{ flex: 1, minWidth: 60, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                  <Wrench size={12} color={colors.warning} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Appliance risk: {branch.applianceRisk}</Text>
-                </View>
-                <View style={{ flex: 1, minWidth: 60, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                  <DollarSign size={12} color={colors.brand} />
-                  <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Budget: {budgetPct}%</Text>
-                </View>
               </View>
             </View>
           );
         })}
-      </View>
+      </ScrollView>
     </ScreenWrapper>
   );
-}
-
-function formatPctShort(v: number): string {
-  return v + "%";
 }

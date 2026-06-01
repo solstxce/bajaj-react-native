@@ -34,74 +34,47 @@ export function BranchManagerHomeScreen() {
       <AlertStrip onReviewAlerts={() => setPage("notifications")} onOpenAudit={openAuditTrail} />
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
-        <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Branches managed" value={String(scopedBranches.length)} meta="Under your oversight" accent={colors.brand} icon={Building} /></View>
-        <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Total staff" value={String(totalStaff)} meta="Across all branches" accent={colors.slate600} icon={Users} /></View>
-        <View style={{ flex: 1, minWidth: 140 }}><StatCard label="Open issues" value={String(totalIssues)} meta="Across managed branches" accent={colors.error} icon={AlertCircle} /></View>
-        <View style={{ flex: 1, minWidth: 140 }}><StatCard label="SLA score" value={avgSla + "%"} meta="Average across branches" accent={colors.success} icon={TrendingUp} /></View>
+        <TouchableOpacity onPress={() => setPage("branches")} style={{ flex: 1, minWidth: 160, backgroundColor: colors.white, borderRadius: borderRadius["2xl"], padding: spacing.xl, borderWidth: 1, borderColor: colors.border, alignItems: "center", gap: spacing.md, elevation: 2, shadowColor: "rgba(0,91,172,0.04)", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 1, shadowRadius: 24 }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.sky50, alignItems: "center", justifyContent: "center" }}>
+            <Building size={24} color={colors.sky600} />
+          </View>
+          <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.slate900 }}>Branches</Text>
+          <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{scopedBranches.length} Managed</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setPage("attendance")} style={{ flex: 1, minWidth: 160, backgroundColor: colors.white, borderRadius: borderRadius["2xl"], padding: spacing.xl, borderWidth: 1, borderColor: colors.border, alignItems: "center", gap: spacing.md, elevation: 2, shadowColor: "rgba(0,91,172,0.04)", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 1, shadowRadius: 24 }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.emerald50, alignItems: "center", justifyContent: "center" }}>
+            <Users size={24} color={colors.emerald600} />
+          </View>
+          <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.slate900 }}>Staff</Text>
+          <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{totalStaff} Total</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setPage("issues")} style={{ flex: 1, minWidth: 160, backgroundColor: colors.white, borderRadius: borderRadius["2xl"], padding: spacing.xl, borderWidth: 1, borderColor: colors.border, alignItems: "center", gap: spacing.md, elevation: 2, shadowColor: "rgba(0,91,172,0.04)", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 1, shadowRadius: 24 }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.amber50, alignItems: "center", justifyContent: "center" }}>
+            <AlertCircle size={24} color={colors.amber700} />
+          </View>
+          <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.slate900 }}>Issues</Text>
+          <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{totalIssues} Open</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setPage("approvals")} style={{ flex: 1, minWidth: 160, backgroundColor: colors.white, borderRadius: borderRadius["2xl"], padding: spacing.xl, borderWidth: 1, borderColor: colors.border, alignItems: "center", gap: spacing.md, elevation: 2, shadowColor: "rgba(0,91,172,0.04)", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 1, shadowRadius: 24 }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
+            <Stamp size={24} color={colors.slate700} />
+          </View>
+          <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.slate900 }}>Approvals</Text>
+          <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{pendingApprovals.length} Pending</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={{ gap: spacing.xl, marginTop: spacing.xl }}>
-        <Card variant="glass">
-          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.lg }}>
-            <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
-              <Building size={16} color={colors.brand} strokeWidth={2} />
-            </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Branch Health Overview</Text>
-          </View>
-          <View style={{ gap: spacing.md }}>
-            {scopedBranches.map((branch) => (
-              <TouchableOpacity key={branch.id} onPress={() => openBranchDetail(branch.id)} activeOpacity={0.7} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.xl, padding: spacing.xl }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.name}</Text>
-                    <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, marginTop: spacing.xs }}>{branch.code} | {branch.city}</Text>
-                  </View>
-                  <View style={{ backgroundColor: branch.health >= 90 ? colors.emerald50 : branch.health >= 80 ? colors.amber50 : colors.rose50, borderRadius: borderRadius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }}>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: branch.health >= 90 ? colors.emerald700 : branch.health >= 80 ? colors.amber700 : colors.rose700 }}>{branch.health}%</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.lg }}>
-                  <View style={{ flex: 1, minWidth: 60 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                      <TrendingUp size={12} color={colors.textSecondary} />
-                      <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Performance</Text>
-                    </View>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{branch.performance}%</Text>
-                  </View>
-                  <View style={{ flex: 1, minWidth: 60 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                      <Clock size={12} color={colors.textSecondary} />
-                      <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Attendance</Text>
-                    </View>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{branch.todayAttendance}%</Text>
-                  </View>
-                  <View style={{ flex: 1, minWidth: 60 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                      <Users size={12} color={colors.textSecondary} />
-                      <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Staff</Text>
-                    </View>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{branch.staffCount}</Text>
-                  </View>
-                  <View style={{ flex: 1, minWidth: 60 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-                      <AlertCircle size={12} color={colors.error} />
-                      <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Alerts</Text>
-                    </View>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.error }}>{branch.criticalAlerts}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </Card>
-
         {pendingApprovals.length > 0 ? (
           <Card variant="glass">
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.lg }}>
               <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.warning + "15", alignItems: "center", justifyContent: "center" }}>
                 <Stamp size={16} color={colors.warning} strokeWidth={2} />
               </View>
-              <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Pending Approvals</Text>
+              <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Pending Approvals</Text>
             </View>
             <View style={{ gap: spacing.md }}>
               {pendingApprovals.slice(0, 3).map((a) => {
@@ -110,7 +83,7 @@ export function BranchManagerHomeScreen() {
                   <View key={a.id} style={{ backgroundColor: colors.bg, borderRadius: borderRadius.lg, padding: spacing.xl }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>{a.title}</Text>
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{a.title}</Text>
                         <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, marginTop: spacing.xs }}>{a.kind} | {branch?.name} | Rs {a.amount.toLocaleString("en-IN")}</Text>
                       </View>
                       <Badge label={a.priority} type={a.priority} />
@@ -118,11 +91,11 @@ export function BranchManagerHomeScreen() {
                     <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg }}>
                       <TouchableOpacity onPress={() => approveRequest(a.id)} style={{ backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                         <CheckCircle size={14} color={colors.white} strokeWidth={2} />
-                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Approve</Text>
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Approve</Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => rejectRequest(a.id)} style={{ backgroundColor: colors.error, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                         <AlertCircle size={14} color={colors.white} strokeWidth={2} />
-                        <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Reject</Text>
+                        <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>Reject</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -135,20 +108,20 @@ export function BranchManagerHomeScreen() {
         <Card variant="soft" style={{ backgroundColor: colors.text }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.md }}>
             <ChevronRight size={16} color={colors.slate300} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.slate300, textTransform: "uppercase" }}>Quick Actions</Text>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.slate300, textTransform: "uppercase" }}>Quick Actions</Text>
           </View>
           <View style={{ gap: spacing.md }}>
             <TouchableOpacity onPress={() => setPage("branches")} style={{ backgroundColor: colors.brand, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md }}>
               <Building size={16} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>View Branches</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>View Branches</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setPage("approvals")} style={{ backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md }}>
               <Stamp size={16} color={colors.text} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Review Approvals</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>Review Approvals</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setPage("visits")} style={{ backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md }}>
               <Route size={16} color={colors.text} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>Visit Reports</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>Visit Reports</Text>
             </TouchableOpacity>
           </View>
         </Card>
@@ -158,14 +131,14 @@ export function BranchManagerHomeScreen() {
             <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.error + "15", alignItems: "center", justifyContent: "center" }}>
               <TriangleAlert size={16} color={colors.error} strokeWidth={2} />
             </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Recent Alerts</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Recent Alerts</Text>
           </View>
           <View style={{ gap: spacing.md }}>
             {criticalAlerts.length > 0 ? criticalAlerts.slice(0, 3).map((n) => (
               <View key={n.id} style={{ backgroundColor: colors.rose50, borderRadius: borderRadius.lg, padding: spacing.xl, flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
                 <TriangleAlert size={16} color={colors.rose700} strokeWidth={2} style={{ marginTop: 2 }} />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.rose700 }}>{n.title}</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.rose700 }}>{n.title}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: colors.rose700, marginTop: spacing.xs }}>{n.detail}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: colors.rose700, marginTop: spacing.xs }}>{n.time}</Text>
                 </View>

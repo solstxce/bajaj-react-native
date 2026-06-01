@@ -22,55 +22,37 @@ export function TaskCard({ task, compact = false, actions }: Props) {
   const pct = (task.checklistDone / task.checklistTotal) * 100;
 
   return (
-    <View style={{ backgroundColor: colors.card, borderRadius: borderRadius.xl, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, marginBottom: spacing.xl, ...shadows.card }}>
-      <View style={{ gap: spacing.xl }}>
+    <View style={{ backgroundColor: colors.white, borderRadius: 24, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, marginBottom: spacing.xl, ...shadows.card }}>
+      <View style={{ gap: spacing.lg }}>
         <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center" }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center", marginBottom: spacing.md }}>
             <Badge label={task.status} type={task.status} />
             <Badge label={task.priority} type={task.priority} />
-            <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase" }}>{task.schedule}</Text>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>{task.schedule}</Text>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "flex-start", gap: spacing.md, marginTop: spacing.lg }}>
-            <View style={{ width: 28, height: 28, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center", marginTop: 2 }}>
-              <Camera size={14} color={colors.brand} strokeWidth={2} />
-            </View>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, flex: 1 }}>{task.title}</Text>
-          </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.xs, marginLeft: spacing.md + spacing.lg }}>
-            <MapPin size={12} color={colors.textSecondary} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{branch?.name} | {task.zone} | Assigned: {assignee}</Text>
+          <View style={{ gap: spacing.xs }}>
+            <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.slate900 }}>{task.title}</Text>
+            <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{branch?.name} | {task.zone} | Assigned: {assignee}</Text>
           </View>
 
           {compact ? null : (
             <>
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
-                <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                  <Clock size={14} color={colors.textSecondary} strokeWidth={2} />
-                  <View>
-                    <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Deadline</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{countdown(task.deadline, "2026-04-26T11:20:00")}</Text>
-                  </View>
+                <View style={{ flex: 1, minWidth: 100 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Deadline</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{countdown(task.deadline, "2026-04-26T11:20:00")}</Text>
                 </View>
-                <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                  <CheckSquare size={14} color={colors.textSecondary} strokeWidth={2} />
-                  <View>
-                    <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Checklist</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{task.checklistDone}/{task.checklistTotal} items</Text>
-                  </View>
+                <View style={{ flex: 1, minWidth: 100 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Checklist</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{task.checklistDone}/{task.checklistTotal} items</Text>
                 </View>
-                <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                  <Camera size={14} color={colors.textSecondary} strokeWidth={2} />
-                  <View>
-                    <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Proof rule</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{task.proofLabel}</Text>
-                  </View>
+                <View style={{ flex: 1, minWidth: 100 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Proof rule</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{task.proofLabel}</Text>
                 </View>
-                <View style={{ minWidth: 80, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                  <ShieldAlert size={14} color={colors.textSecondary} strokeWidth={2} />
-                  <View>
-                    <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Escalation</Text>
-                    <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{task.escalation}</Text>
-                  </View>
+                <View style={{ flex: 1, minWidth: 100 }}>
+                  <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Escalation</Text>
+                  <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{task.escalation}</Text>
                 </View>
               </View>
               <View style={{ marginTop: spacing.lg }}>
@@ -80,52 +62,29 @@ export function TaskCard({ task, compact = false, actions }: Props) {
           )}
 
           {task.redoReason ? (
-            <View style={{ marginTop: spacing.lg, backgroundColor: colors.red50, borderRadius: borderRadius.lg, padding: spacing.lg, flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
-              <RotateCcw size={14} color={colors.red700} strokeWidth={2} style={{ marginTop: 2 }} />
-              <Text style={{ fontSize: fontSize.sm, color: colors.red700, flex: 1 }}><Text style={{ fontWeight: "700" }}>Redo note:</Text> {task.redoReason}</Text>
+            <View style={{ marginTop: spacing.lg, backgroundColor: colors.red50, borderRadius: borderRadius.lg, padding: spacing.lg }}>
+              <Text style={{ fontSize: fontSize.sm, color: colors.red700 }}><Text style={{ fontWeight: "400" }}>Redo note:</Text> {task.redoReason}</Text>
             </View>
           ) : null}
         </View>
 
-        {actions && actions.length > 0 ? (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: compact ? spacing.md : 0 }}>
+          <TouchableOpacity
+            onPress={() => openTaskDetail(task.id)}
+            style={{ borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
+          >
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate700 }}>Open detail</Text>
+          </TouchableOpacity>
+          {actions?.map((a, i) => (
             <TouchableOpacity
-              onPress={() => openTaskDetail(task.id)}
-              style={{
-                borderRadius: borderRadius.lg,
-                paddingHorizontal: spacing.xl,
-                paddingVertical: spacing.md,
-                backgroundColor: colors.brand,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: spacing.sm,
-              }}
+              key={i}
+              onPress={a.onPress}
+              style={{ borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: a.primary ? colors.success : colors.slate900, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
             >
-              <Eye size={14} color={colors.white} strokeWidth={2} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>Detail</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>{a.label}</Text>
             </TouchableOpacity>
-            {actions.map((a, i) => (
-              <TouchableOpacity
-                key={i}
-                onPress={a.onPress}
-                style={{
-                  borderRadius: borderRadius.lg,
-                  paddingHorizontal: spacing.xl,
-                  paddingVertical: spacing.md,
-                  backgroundColor: a.primary ? colors.success : colors.card,
-                  borderWidth: a.primary ? 0 : 1,
-                  borderColor: colors.border,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: spacing.sm,
-                }}
-              >
-                {a.primary && <Camera size={14} color={colors.white} strokeWidth={2} />}
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: a.primary ? colors.white : colors.text }}>{a.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : null}
+          ))}
+        </View>
       </View>
     </View>
   );

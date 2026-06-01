@@ -26,11 +26,11 @@ export function RmAnalyticsScreen() {
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xl }}>
         <TouchableOpacity onPress={() => setSelectedBranch(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedBranch ? colors.brand : colors.slate100 }}>
-          <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: !selectedBranch ? colors.white : colors.textSecondary }}>All</Text>
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: !selectedBranch ? colors.white : colors.textSecondary }}>All</Text>
         </TouchableOpacity>
         {scopedBranches.map((b) => (
           <TouchableOpacity key={b.id} onPress={() => setSelectedBranch(b.id)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedBranch === b.id ? colors.brand : colors.slate100 }}>
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: selectedBranch === b.id ? colors.white : colors.textSecondary }}>{b.name.split(" ")[0]}</Text>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: selectedBranch === b.id ? colors.white : colors.textSecondary }}>{b.name.split(" ")[0]}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -47,7 +47,7 @@ export function RmAnalyticsScreen() {
           <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
             <BarChart3 size={16} color={colors.brand} strokeWidth={2} />
           </View>
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Branch Comparison</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Branch Comparison</Text>
         </View>
         <View style={{ gap: spacing.md }}>
           {filtered.map((branch) => (
@@ -57,7 +57,7 @@ export function RmAnalyticsScreen() {
                   <View style={{ width: 24, height: 24, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
                     <Building size={12} color={colors.brand} strokeWidth={2} />
                   </View>
-                  <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{branch.name}</Text>
+                  <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>{branch.name}</Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.lg }}>
@@ -65,28 +65,28 @@ export function RmAnalyticsScreen() {
                   <TrendingUp size={12} color={colors.brand} />
                   <View>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Revenue</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>{branch.revenueIndex}</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{branch.revenueIndex}</Text>
                   </View>
                 </View>
                 <View style={{ flex: 1, minWidth: 70, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
                   <Users size={12} color={colors.brandSecondary} />
                   <View>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Footfall</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>{branch.customerFootfall}</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{branch.customerFootfall}</Text>
                   </View>
                 </View>
                 <View style={{ flex: 1, minWidth: 70, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
                   <Clock size={12} color={colors.success} />
                   <View>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>SLA</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>{branch.sla}%</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{branch.sla}%</Text>
                   </View>
                 </View>
                 <View style={{ flex: 1, minWidth: 70, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
                   <Heart size={12} color={colors.warning} />
                   <View>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Health</Text>
-                    <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.text }}>{branch.health}%</Text>
+                    <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{branch.health}%</Text>
                   </View>
                 </View>
               </View>
@@ -107,7 +107,7 @@ export function RmAnalyticsScreen() {
           <View style={{ width: 32, height: 32, borderRadius: borderRadius.md, backgroundColor: colors.brand + "15", alignItems: "center", justifyContent: "center" }}>
             <Lightbulb size={16} color={colors.brand} strokeWidth={2} />
           </View>
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>Key Insights</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>Key Insights</Text>
         </View>
         <View style={{ gap: spacing.md }}>
           {[
@@ -121,7 +121,7 @@ export function RmAnalyticsScreen() {
                 <insight.icon size={18} color={insight.color} strokeWidth={2} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text }}>{insight.title}</Text>
+                <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>{insight.title}</Text>
                 <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, marginTop: spacing.xs }}>{insight.desc}</Text>
               </View>
             </View>

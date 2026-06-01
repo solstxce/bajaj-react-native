@@ -13,6 +13,7 @@ import { useApp } from "../../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../../theme/theme";
 import { formatPct, formatMoney } from "../../../utils/helpers";
 import { Branch } from "../../../types/domain";
+import { StaffDetailScreen } from "./StaffDetailScreen";
 
 interface Props {
   branch: Branch;
@@ -32,6 +33,16 @@ const TABS: { key: TabKey; label: string }[] = [
 export function BranchDeepDiveScreen({ branch, onBack }: Props) {
   const { scopedUsers, scopedTasks, scopedComplaints, scopedAppliances, scopedAttendance } = useApp();
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+
+  if (selectedUserId) {
+    return (
+      <StaffDetailScreen
+        userId={selectedUserId}
+        onBack={() => setSelectedUserId(null)}
+      />
+    );
+  }
 
   const branchUsers = scopedUsers.filter((u) => u.branchId === branch.id);
   const branchTasks = scopedTasks.filter((t) => t.branchId === branch.id);
@@ -58,8 +69,8 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
           <ChevronRight size={18} color={colors.text} strokeWidth={2} style={{ transform: [{ rotate: "180deg" }] }} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{branch.code}</Text>
-          <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text }}>{branch.name}</Text>
+          <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{branch.code}</Text>
+          <Text style={{ fontSize: fontSize["2xl"], fontWeight: "400", color: colors.text }}>{branch.name}</Text>
         </View>
         <Badge label={branch.health >= 90 ? "Healthy" : "Watch"} type={branch.health >= 90 ? "Completed" : "High"} />
       </View>
@@ -73,7 +84,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
               onPress={() => setActiveTab(tab.key)}
               style={{ flex: 1, borderRadius: borderRadius["2xl"], paddingVertical: spacing.sm, alignItems: "center", backgroundColor: active ? colors.card : "transparent", ...(active ? { shadowColor: "rgba(0,0,0,0.06)", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 1, shadowRadius: 4, elevation: 2 } : {}) }}
             >
-              <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: active ? colors.text : colors.textSecondary }}>{tab.label}</Text>
+              <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: active ? colors.text : colors.textSecondary }}>{tab.label}</Text>
             </TouchableOpacity>
           );
         })}
@@ -103,7 +114,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
               <View key={s.label} style={{ flex: 1, minWidth: 70, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: borderRadius["2xl"], padding: spacing.md, alignItems: "center" }}>
                 <s.icon size={14} color={s.color} strokeWidth={2} />
                 <Text style={{ fontSize: fontSize.xs, color: colors.slate300, marginTop: spacing.xs }}>{s.label}</Text>
-                <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: s.color, marginTop: spacing.xs }}>{s.value}</Text>
+                <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: s.color, marginTop: spacing.xs }}>{s.value}</Text>
               </View>
             ))}
           </View>
@@ -111,7 +122,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
           {[
-            { label: "Staff", value: String(branch.staffCount), meta: `${branch.workerCount}W · ${branch.employeeCount}E`, accent: colors.brandSecondary, icon: Users },
+            { label: "Staff", value: String(branch.staffCount), meta: `${branch.staffCount} total`, accent: colors.brandSecondary, icon: Users },
             { label: "Open Issues", value: String(openComplaints), meta: `${branch.criticalAlerts} critical`, accent: colors.error, icon: AlertCircle },
             { label: "Pending Tasks", value: String(pendingTasks), meta: `of ${branchTasks.length} total`, accent: colors.warning, icon: FileText },
             { label: "Budget Used", value: formatPct(budgetPct), meta: `of ${formatMoney(branch.monthlyBudget)}`, accent: colors.brand, icon: DollarSign },
@@ -121,16 +132,16 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                 <View style={{ width: 28, height: 28, borderRadius: borderRadius.md, backgroundColor: s.accent + "15", alignItems: "center", justifyContent: "center" }}>
                   <s.icon size={14} color={s.accent} strokeWidth={2} />
                 </View>
-                <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</Text>
+                <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.textSecondary, textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</Text>
               </View>
-              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "800", color: colors.text, marginTop: spacing.sm }}>{s.value}</Text>
+              <Text style={{ fontSize: fontSize["3xl"], fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{s.value}</Text>
               <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>{s.meta}</Text>
             </View>
           ))}
         </View>
 
         <View style={{ backgroundColor: colors.card, borderRadius: borderRadius["4xl"], padding: spacing["2xl"], borderWidth: 1, borderColor: colors.border }}>
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginBottom: spacing.lg }}>Revenue & Footfall</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginBottom: spacing.lg }}>Revenue & Footfall</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
             {[
               { label: "Revenue Index", value: String(branch.revenueIndex), meta: "vs regional avg", icon: TrendingUp, color: colors.success },
@@ -143,7 +154,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                   <s.icon size={14} color={s.color} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{s.label}</Text>
                 </View>
-                <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.sm }}>{s.value}</Text>
+                <Text style={{ fontSize: fontSize["2xl"], fontWeight: "400", color: colors.text, marginTop: spacing.sm }}>{s.value}</Text>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>{s.meta}</Text>
               </View>
             ))}
@@ -151,10 +162,10 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
         </View>
 
         <View style={{ backgroundColor: colors.card, borderRadius: borderRadius["4xl"], padding: spacing["2xl"], borderWidth: 1, borderColor: colors.border }}>
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginBottom: spacing.lg }}>Budget Tracker</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginBottom: spacing.lg }}>Budget Tracker</Text>
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.sm }}>
             <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>Used: {formatMoney(branch.usedBudget)}</Text>
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{formatMoney(branch.monthlyBudget)}</Text>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{formatMoney(branch.monthlyBudget)}</Text>
           </View>
           <ProgressBar value={budgetPct} color={budgetPct > 85 ? colors.error : budgetPct > 70 ? colors.warning : colors.success} height={12} />
           <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.sm }}>{budgetPct}% utilised · {formatMoney(branch.monthlyBudget - branch.usedBudget)} remaining</Text>
@@ -170,22 +181,22 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginBottom: spacing.md }}>
           <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.lg, alignItems: "center", borderWidth: 1, borderColor: colors.border }}>
             <HardHat size={18} color={colors.brandSecondary} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.xs }}>{branch.workerCount}</Text>
+            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "400", color: colors.text, marginTop: spacing.xs }}>{branch.workerCount}</Text>
             <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Workers</Text>
           </View>
           <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.lg, alignItems: "center", borderWidth: 1, borderColor: colors.border }}>
             <Users size={18} color={colors.brand} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.xs }}>{branch.employeeCount}</Text>
-            <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Employees</Text>
+            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "400", color: colors.text, marginTop: spacing.xs }}>{branch.staffCount}</Text>
+            <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Total staff</Text>
           </View>
           <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.lg, alignItems: "center", borderWidth: 1, borderColor: colors.border }}>
             <Users size={18} color={colors.success} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.xs }}>{todayPresent}</Text>
+            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "400", color: colors.text, marginTop: spacing.xs }}>{todayPresent}</Text>
             <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Present</Text>
           </View>
           <View style={{ flex: 1, minWidth: 80, backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.lg, alignItems: "center", borderWidth: 1, borderColor: colors.border }}>
             <Clock size={18} color={colors.warning} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "800", color: colors.text, marginTop: spacing.xs }}>{todayTotal - todayPresent}</Text>
+            <Text style={{ fontSize: fontSize["2xl"], fontWeight: "400", color: colors.text, marginTop: spacing.xs }}>{todayTotal - todayPresent}</Text>
             <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Away</Text>
           </View>
         </View>
@@ -195,14 +206,14 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
             <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary, textAlign: "center", paddingVertical: spacing["4xl"] }}>No staff data</Text>
           ) : allStaff.map((user) => {
             return (
-              <View key={user.id} style={{ backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.xl, borderWidth: 1, borderColor: colors.border }}>
+              <TouchableOpacity key={user.id} onPress={() => setSelectedUserId(user.id)} activeOpacity={0.7} style={{ backgroundColor: colors.card, borderRadius: borderRadius["2xl"], padding: spacing.xl, borderWidth: 1, borderColor: colors.border }}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, flex: 1 }}>
                     <View style={{ width: 40, height: 40, borderRadius: borderRadius["2xl"], backgroundColor: colors.slate100, alignItems: "center", justifyContent: "center" }}>
-                      <Text style={{ fontSize: fontSize.base, fontWeight: "700", color: colors.text }}>{user.name.charAt(0)}</Text>
+                      <Text style={{ fontSize: fontSize.base, fontWeight: "400", color: colors.text }}>{user.name.charAt(0)}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{user.name}</Text>
+                      <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{user.name}</Text>
                       <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{user.position}</Text>
                     </View>
                     <Badge label={user.status} type={user.status} />
@@ -211,18 +222,18 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                 <View style={{ flexDirection: "row", gap: spacing.lg, marginTop: spacing.md }}>
                   <View style={{ flex: 1, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Attendance</Text>
-                    <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{formatPct(user.attendancePct)}</Text>
+                    <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{formatPct(user.attendancePct)}</Text>
                   </View>
                   <View style={{ flex: 1, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Tasks</Text>
-                    <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{user.tasksClosed}</Text>
+                    <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{user.tasksClosed}</Text>
                   </View>
                   <View style={{ flex: 1, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                     <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Proof</Text>
-                    <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{formatPct(user.proofRate)}</Text>
+                    <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{formatPct(user.proofRate)}</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -236,7 +247,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
         {criticalAppliances > 0 && (
           <View style={{ backgroundColor: colors.rose50, borderRadius: borderRadius["2xl"], padding: spacing.xl, flexDirection: "row", alignItems: "center", gap: spacing.md }}>
             <TriangleAlert size={18} color={colors.rose700} strokeWidth={2} />
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.rose700, flex: 1 }}>{criticalAppliances} appliance(s) need immediate attention</Text>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.rose700, flex: 1 }}>{criticalAppliances} appliance(s) need immediate attention</Text>
           </View>
         )}
         {branchAppliances.length === 0 ? (
@@ -249,7 +260,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                   {app.status === "Operational" ? <Zap size={16} color={colors.emerald700} strokeWidth={2} /> : app.status === "At Risk" ? <TriangleAlert size={16} color={colors.amber700} strokeWidth={2} /> : <XCircle size={16} color={colors.rose700} strokeWidth={2} />}
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{app.name}</Text>
+                  <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{app.name}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{app.category} · {app.zone}</Text>
                 </View>
               </View>
@@ -258,19 +269,19 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Health</Text>
-                <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: app.healthScore >= 80 ? colors.success : app.healthScore >= 60 ? colors.warning : colors.error }}>{formatPct(app.healthScore)}</Text>
+                <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: app.healthScore >= 80 ? colors.success : app.healthScore >= 60 ? colors.warning : colors.error }}>{formatPct(app.healthScore)}</Text>
               </View>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Brand</Text>
-                <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: colors.text }}>{app.brand}</Text>
+                <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{app.brand}</Text>
               </View>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Service</Text>
-                <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: colors.text }}>{app.nextService}</Text>
+                <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{app.nextService}</Text>
               </View>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Parts</Text>
-                <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: colors.text }}>{app.pendingParts === "None" ? "—" : app.pendingParts}</Text>
+                <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{app.pendingParts === "None" ? "—" : app.pendingParts}</Text>
               </View>
             </View>
           </View>
@@ -292,7 +303,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                   {c.status === "Escalated" ? <TriangleAlert size={14} color={colors.rose700} strokeWidth={2} /> : <AlertCircle size={14} color={colors.amber700} strokeWidth={2} />}
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{c.title}</Text>
+                  <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{c.title}</Text>
                   <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>{c.type} · {c.assignedVendor}</Text>
                 </View>
               </View>
@@ -301,11 +312,11 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Est. Cost</Text>
-                <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{formatMoney(c.estimatedCost)}</Text>
+                <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{formatMoney(c.estimatedCost)}</Text>
               </View>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Escalation</Text>
-                <Text style={{ fontSize: fontSize.md, fontWeight: "700", color: colors.text }}>{c.escalationStage}</Text>
+                <Text style={{ fontSize: fontSize.md, fontWeight: "400", color: colors.text }}>{c.escalationStage}</Text>
               </View>
               <View style={{ flex: 1, minWidth: 60, backgroundColor: colors.slate50, borderRadius: borderRadius.lg, padding: spacing.sm, alignItems: "center" }}>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>Priority</Text>
@@ -325,7 +336,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
     return (
       <View style={{ gap: spacing.md }}>
         <View style={{ backgroundColor: colors.card, borderRadius: borderRadius["4xl"], padding: spacing["2xl"], borderWidth: 1, borderColor: colors.border }}>
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginBottom: spacing.lg }}>Branch Details</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginBottom: spacing.lg }}>Branch Details</Text>
           <View style={{ gap: spacing.md }}>
             {[
               { label: "Code", value: branch.code, icon: Building },
@@ -339,14 +350,14 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text, maxWidth: 200 }}>{row.value}</Text>
+                <Text numberOfLines={1} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text, maxWidth: 200 }}>{row.value}</Text>
               </View>
             ))}
           </View>
         </View>
 
         <View style={{ backgroundColor: colors.card, borderRadius: borderRadius["4xl"], padding: spacing["2xl"], borderWidth: 1, borderColor: colors.border }}>
-          <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginBottom: spacing.lg }}>Operations</Text>
+          <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginBottom: spacing.lg }}>Operations</Text>
           <View style={{ gap: spacing.md }}>
             {[
               { label: "Shift Window", value: branch.shiftWindow, icon: Clock },
@@ -363,7 +374,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
                   <row.icon size={14} color={colors.textSecondary} strokeWidth={2} />
                   <Text style={{ fontSize: fontSize.sm, color: colors.textSecondary }}>{row.label}</Text>
                 </View>
-                <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.text }}>{row.value}</Text>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.text }}>{row.value}</Text>
               </View>
             ))}
           </View>
@@ -371,7 +382,7 @@ export function BranchDeepDiveScreen({ branch, onBack }: Props) {
 
         {branchComplaints.filter((c) => c.timeline.length > 0).length > 0 && (
           <View style={{ backgroundColor: colors.card, borderRadius: borderRadius["4xl"], padding: spacing["2xl"], borderWidth: 1, borderColor: colors.border }}>
-            <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.text, marginBottom: spacing.lg }}>Recent Activity</Text>
+            <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text, marginBottom: spacing.lg }}>Recent Activity</Text>
             {branchComplaints.slice(0, 3).map((c) => c.timeline.slice(-2).map((entry, i) => (
               <View key={`${c.id}-${i}`} style={{ flexDirection: "row", gap: spacing.sm, marginBottom: spacing.md }}>
                 <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.brand, marginTop: 4 }} />
