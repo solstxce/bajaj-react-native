@@ -15,14 +15,26 @@ export function RmAttendanceScreen() {
   const [activeTab, setActiveTab] = useState("today");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("April 2026");
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [locationMode, setLocationMode] = useState<"state" | "district">("state");
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 
-  const cities = [...new Set(scopedBranches.map(b => b.city))].sort();
-  const cityFilteredBranches = selectedCity ? scopedBranches.filter(b => b.city === selectedCity) : scopedBranches;
-  const cityBranchIds = cityFilteredBranches.map(b => b.id);
+  const getDistrict = (branch: typeof scopedBranches[number]) => branch.name || branch.city || "Unknown district";
+  const getState = (branch: typeof scopedBranches[number]) => {
+    const parts = branch.address?.split(",").map((part) => part.trim()).filter(Boolean) || [];
+    return parts[parts.length - 1] || branch.city || "Unknown state";
+  };
+  const getLocation = (branch: typeof scopedBranches[number]) => locationMode === "state" ? getState(branch) : getDistrict(branch);
+  const locationGroups = scopedBranches.reduce<Record<string, number>>((acc, branch) => {
+    const key = getLocation(branch);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const locationEntries = Object.entries(locationGroups).sort((a, b) => b[1] - a[1]);
+  const locationFilteredBranches = selectedLocation ? scopedBranches.filter(b => getLocation(b) === selectedLocation) : scopedBranches;
+  const locationBranchIds = locationFilteredBranches.map(b => b.id);
 
   const staffUsers = scopedUsers.filter(u =>
-    cityBranchIds.includes(u.branchId) && (u.role === "lc" || u.role === "branchManager" || (u.role as string) === "worker" || (u.role as string) === "employee")
+    locationBranchIds.includes(u.branchId) && (u.role === "lc" || u.role === "branchManager" || (u.role as string) === "worker" || (u.role as string) === "employee")
   );
 
   const filteredStaff = staffUsers.filter(u =>
@@ -30,7 +42,7 @@ export function RmAttendanceScreen() {
     u.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const cityFilteredAttendance = todayAttendance.filter(a => staffUsers.find(u => u.id === a.userId));
+  const locationFilteredAttendance = todayAttendance.filter(a => staffUsers.find(u => u.id === a.userId));
 
   return (
     <ScreenWrapper>
@@ -50,14 +62,23 @@ export function RmAttendanceScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: spacing.xl, paddingBottom: 40, paddingTop: spacing.lg }}>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
-          <TouchableOpacity onPress={() => setSelectedCity(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedCity ? colors.brand : colors.slate100, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-            <MapPin size={14} color={!selectedCity ? colors.white : colors.textSecondary} />
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: !selectedCity ? colors.white : colors.textSecondary }}>All Regions</Text>
+          {(["state", "district"] as const).map((mode) => (
+            <TouchableOpacity key={mode} onPress={() => { setLocationMode(mode); setSelectedLocation(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: locationMode === mode ? colors.slate900 : colors.slate100, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
+              <MapPin size={14} color={locationMode === mode ? colors.white : colors.textSecondary} />
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: locationMode === mode ? colors.white : colors.textSecondary, textTransform: "capitalize" }}>{mode} wise</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+          <TouchableOpacity onPress={() => setSelectedLocation(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedLocation ? colors.brand : colors.slate100, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
+            <MapPin size={14} color={!selectedLocation ? colors.white : colors.textSecondary} />
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: !selectedLocation ? colors.white : colors.textSecondary }}>All {locationMode}s</Text>
           </TouchableOpacity>
-          {cities.map((city) => (
-            <TouchableOpacity key={city} onPress={() => setSelectedCity(city)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedCity === city ? colors.brand : colors.slate100, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
-              <MapPin size={14} color={selectedCity === city ? colors.white : colors.textSecondary} />
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: selectedCity === city ? colors.white : colors.textSecondary }}>{city}</Text>
+          {locationEntries.map(([location, count]) => (
+            <TouchableOpacity key={location} onPress={() => setSelectedLocation(location)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedLocation === location ? colors.brand : colors.slate100, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
+              <MapPin size={14} color={selectedLocation === location ? colors.white : colors.textSecondary} />
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: selectedLocation === location ? colors.white : colors.textSecondary }}>{location} · {count}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -85,7 +106,7 @@ export function RmAttendanceScreen() {
             <View style={{ gap: spacing.md }}>
               {filteredStaff.map((staff) => {
                 const branch = getBranch(staff.branchId);
-                const attRecord = cityFilteredAttendance.find(a => a.userId === staff.id);
+                const attRecord = locationFilteredAttendance.find(a => a.userId === staff.id);
                 const isPresent = attRecord?.status === "Present" || attRecord?.status === "Late";
                 const staffTasks = scopedTasks.filter(t => t.assignedTo === staff.id && (t.status === "Pending" || t.status === "In Progress" || t.status === "Completed"));
 
@@ -154,7 +175,7 @@ export function RmAttendanceScreen() {
 
             <View style={{ gap: spacing.md }}>
               {["2026-04-26", "2026-04-25", "2026-04-24", "2026-04-23"].map((date) => {
-                const dayAtt = scopedAttendance.filter((a) => a.date === date && cityBranchIds.includes(getBranch(scopedUsers.find(u => u.id === a.userId)?.branchId ?? 0)?.id ?? 0));
+                const dayAtt = scopedAttendance.filter((a) => a.date === date && locationBranchIds.includes(getBranch(scopedUsers.find(u => u.id === a.userId)?.branchId ?? 0)?.id ?? 0));
                 const presentCount = dayAtt.filter((a) => a.status === "Present" || a.status === "Late").length;
                 const absentStaff = staffUsers.filter(u => !dayAtt.find(a => a.userId === u.id && (a.status === "Present" || a.status === "Late")));
 

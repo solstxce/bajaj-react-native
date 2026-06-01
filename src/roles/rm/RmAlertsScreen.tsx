@@ -13,20 +13,45 @@ export function RmAlertsScreen() {
   const { state, setTab, scopedNotifications, scopedBranches, alertStates, acknowledgeAlert, escalateAlert, openBranchDetail } = useApp();
   const filter = state.tabs.rmAlerts || "critical";
   const [selectedBranch, setSelectedBranch] = useState<number | null>(null);
+  const [locationMode, setLocationMode] = useState<"state" | "district">("state");
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [fromDate, setFromDate] = useState("2026-04-20");
   const [toDate, setToDate] = useState("2026-04-26");
 
+  const getDistrict = (branch: typeof scopedBranches[number]) => branch.name || branch.city || "Unknown district";
+  const getState = (branch: typeof scopedBranches[number]) => {
+    const parts = branch.address?.split(",").map((part) => part.trim()).filter(Boolean) || [];
+    return parts[parts.length - 1] || branch.city || "Unknown state";
+  };
+  const getLocation = (branch: typeof scopedBranches[number]) => locationMode === "state" ? getState(branch) : getDistrict(branch);
+  const locationGroups = scopedBranches.reduce<Record<string, number>>((acc, branch) => {
+    const key = getLocation(branch);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const locationEntries = Object.entries(locationGroups).sort((a, b) => b[1] - a[1]);
+  const locationBranchIds = selectedLocation
+    ? scopedBranches.filter((branch) => getLocation(branch) === selectedLocation).map((branch) => branch.id)
+    : scopedBranches.map((branch) => branch.id);
+
   const statusFiltered = scopedNotifications.filter((item) => {
     if (filter !== "all" && item.priority.toLowerCase() !== filter) return false;
+    if (!locationBranchIds.includes(item.branchId)) return false;
     if (selectedBranch && item.branchId !== selectedBranch) return false;
     return true;
   });
 
-  const filtered = statusFiltered.filter(n => 
-    n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    n.detail.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filtered = statusFiltered.filter(n => {
+    const branch = scopedBranches.find((b) => b.id === n.branchId);
+    const query = searchQuery.toLowerCase();
+    return n.title.toLowerCase().includes(query) ||
+      n.detail.toLowerCase().includes(query) ||
+      branch?.name.toLowerCase().includes(query) ||
+      branch?.city.toLowerCase().includes(query) ||
+      branch?.address.toLowerCase().includes(query) ||
+      branch?.code.toLowerCase().includes(query);
+  });
 
   return (
     <ScreenWrapper>
@@ -38,10 +63,29 @@ export function RmAlertsScreen() {
       />
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xl }}>
+        {(["state", "district"] as const).map((mode) => (
+          <TouchableOpacity key={mode} onPress={() => { setLocationMode(mode); setSelectedLocation(null); setSelectedBranch(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: locationMode === mode ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: locationMode === mode ? colors.white : colors.slate600, textTransform: "capitalize" }}>{mode} wise</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
+        <TouchableOpacity onPress={() => { setSelectedLocation(null); setSelectedBranch(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedLocation ? colors.brand : colors.white, borderWidth: 1, borderColor: colors.border }}>
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: !selectedLocation ? colors.white : colors.slate600 }}>All {locationMode}s</Text>
+        </TouchableOpacity>
+        {locationEntries.map(([name, count]) => (
+          <TouchableOpacity key={name} onPress={() => { setSelectedLocation(name); setSelectedBranch(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedLocation === name ? colors.brand : colors.white, borderWidth: 1, borderColor: colors.border }}>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: selectedLocation === name ? colors.white : colors.slate600 }}>{name} · {count}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
         <TouchableOpacity onPress={() => setSelectedBranch(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedBranch ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
           <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: !selectedBranch ? colors.white : colors.slate600 }}>All Branches</Text>
         </TouchableOpacity>
-        {scopedBranches.map((b) => (
+        {scopedBranches.filter((b) => locationBranchIds.includes(b.id)).map((b) => (
           <TouchableOpacity key={b.id} onPress={() => setSelectedBranch(b.id)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedBranch === b.id ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
             <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: selectedBranch === b.id ? colors.white : colors.slate600 }}>{b.name.split(" ")[0]}</Text>
           </TouchableOpacity>

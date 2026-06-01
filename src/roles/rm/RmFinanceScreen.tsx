@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
-import { Wallet, TrendingDown, DollarSign, Building, Clock, CheckCircle, XCircle, AlertCircle, Calendar } from "lucide-react-native";
+import { Wallet, DollarSign, Building, Clock, Calendar, Search, MapPin } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
 import { StatCard } from "../../shared/components/StatCard";
@@ -14,10 +14,33 @@ import { formatMoney } from "../../utils/helpers";
 export function RmFinanceScreen() {
   const { scopedBranches, scopedApprovals, openBranchDetail } = useApp();
   const [selectedBranch, setSelectedBranch] = useState<number | null>(null);
+  const [locationMode, setLocationMode] = useState<"state" | "district">("state");
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [fromDate, setFromDate] = useState("2026-04-01");
   const [toDate, setToDate] = useState("2026-04-30");
 
-  const filtered = selectedBranch ? scopedBranches.filter((b) => b.id === selectedBranch) : scopedBranches;
+  const getDistrict = (branch: typeof scopedBranches[number]) => branch.name || branch.city || "Unknown district";
+  const getState = (branch: typeof scopedBranches[number]) => {
+    const parts = branch.address?.split(",").map((part) => part.trim()).filter(Boolean) || [];
+    return parts[parts.length - 1] || branch.city || "Unknown state";
+  };
+  const getLocation = (branch: typeof scopedBranches[number]) => locationMode === "state" ? getState(branch) : getDistrict(branch);
+  const locationGroups = scopedBranches.reduce<Record<string, number>>((acc, branch) => {
+    const key = getLocation(branch);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const locationEntries = Object.entries(locationGroups).sort((a, b) => b[1] - a[1]);
+  const query = searchQuery.trim().toLowerCase();
+  const filtered = scopedBranches.filter((branch) => {
+    if (selectedLocation && getLocation(branch) !== selectedLocation) return false;
+    if (selectedBranch && branch.id !== selectedBranch) return false;
+    if (!query) return true;
+    return [branch.name, branch.city, branch.address, branch.code, getState(branch), getDistrict(branch)]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query));
+  });
 
   const totalBudget = filtered.reduce((s, b) => s + b.monthlyBudget, 0);
   const totalUsed = filtered.reduce((s, b) => s + b.usedBudget, 0);
@@ -29,10 +52,30 @@ export function RmFinanceScreen() {
       <SectionHeader title="Issues & Costs" />
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xl }}>
+        {(["state", "district"] as const).map((mode) => (
+          <TouchableOpacity key={mode} onPress={() => { setLocationMode(mode); setSelectedLocation(null); setSelectedBranch(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: locationMode === mode ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: locationMode === mode ? colors.white : colors.slate600, textTransform: "capitalize" }}>{mode} wise</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
+        <TouchableOpacity onPress={() => { setSelectedLocation(null); setSelectedBranch(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedLocation ? colors.brand : colors.white, borderWidth: 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.xs }}>
+          <MapPin size={14} color={!selectedLocation ? colors.white : colors.slate600} />
+          <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: !selectedLocation ? colors.white : colors.slate600 }}>All {locationMode}s</Text>
+        </TouchableOpacity>
+        {locationEntries.map(([name, count]) => (
+          <TouchableOpacity key={name} onPress={() => { setSelectedLocation(name); setSelectedBranch(null); }} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedLocation === name ? colors.brand : colors.white, borderWidth: 1, borderColor: colors.border }}>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: selectedLocation === name ? colors.white : colors.slate600 }}>{name} · {count}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
         <TouchableOpacity onPress={() => setSelectedBranch(null)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: !selectedBranch ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
           <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: !selectedBranch ? colors.white : colors.slate600 }}>All Branches</Text>
         </TouchableOpacity>
-        {scopedBranches.map((b) => (
+        {scopedBranches.filter((b) => !selectedLocation || getLocation(b) === selectedLocation).map((b) => (
           <TouchableOpacity key={b.id} onPress={() => setSelectedBranch(b.id)} style={{ paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: borderRadius.full, backgroundColor: selectedBranch === b.id ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.border }}>
             <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: selectedBranch === b.id ? colors.white : colors.slate600 }}>{b.name.split(" ")[0]}</Text>
           </TouchableOpacity>
@@ -40,6 +83,10 @@ export function RmFinanceScreen() {
       </View>
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.xl }}>
+        <View style={{ flex: 2, minWidth: 220, flexDirection: "row", alignItems: "center", backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.border }}>
+          <Search size={16} color={colors.slate400} />
+          <TextInput value={searchQuery} onChangeText={setSearchQuery} placeholder="Search state, district, branch or code" placeholderTextColor={colors.slate400} style={{ flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, color: colors.slate900, fontSize: fontSize.sm }} />
+        </View>
         <View style={{ flex: 1, minWidth: 140, flexDirection: "row", alignItems: "center", backgroundColor: colors.white, borderRadius: borderRadius.lg, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.border }}>
           <Calendar size={16} color={colors.slate400} />
           <TextInput value={fromDate} onChangeText={setFromDate} placeholder="From" style={{ flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, color: colors.slate900, fontSize: fontSize.sm }} />
