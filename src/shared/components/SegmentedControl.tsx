@@ -1,41 +1,48 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
-interface Item {
+interface TabItem {
   label: string;
   value: string;
 }
 
 interface Props {
-  tabs: Item[];
+  tabs: TabItem[];
   activeKey: string;
   onChange: (value: string) => void;
 }
 
 export function SegmentedControl({ tabs, activeKey, onChange }: Props) {
   return (
-    <View style={{ flexDirection: "row", backgroundColor: colors.slate100, borderRadius: 16, padding: 6, width: "100%" }}>
-      {tabs.map((tab) => {
-        const active = activeKey === tab.value;
-        return (
-          <TouchableOpacity
-            key={tab.value}
-            onPress={() => onChange(tab.value)}
-            style={{ 
-              flex: 1,
-              borderRadius: 12, 
-              paddingVertical: 14, 
-              backgroundColor: active ? colors.card : "transparent", 
-              alignItems: "center",
-              justifyContent: "center",
-              ...(active ? { shadowColor: "rgba(0,0,0,0.08)", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 8, elevation: 3 } : {}) 
-            }}
-          >
-            <Text style={{ fontSize: 13, fontWeight: active ? "700" : "600", color: active ? colors.brand : colors.textSecondary, textTransform: "uppercase", letterSpacing: 0.8 }}>{tab.label}</Text>
-          </TouchableOpacity>
-        );
-      })}
+    <View style={{ borderRadius: 999, backgroundColor: "rgba(255,255,255,0.8)", padding: 4, borderWidth: 1, borderColor: "rgba(255,255,255,0.8)", shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 2 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: "row" }}>
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.value}
+              onPress={() => onChange(tab.value)}
+              style={{
+                borderRadius: 999,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor: activeKey === tab.value ? colors.slate900 : "transparent",
+              }}
+            >
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontSize: fontSize.sm,
+                  fontWeight: "600",
+                  color: activeKey === tab.value ? colors.white : colors.slate500,
+                }}
+              >
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }

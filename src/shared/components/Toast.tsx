@@ -6,18 +6,18 @@ import { colors, fontSize, shadows } from "../../theme/theme";
 export function Toast() {
   const { state } = useApp();
   const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-12)).current;
+  const translateY = useRef(new Animated.Value(-6)).current;
 
   useEffect(() => {
     if (state.toast) {
       Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(translateY, { toValue: 0, duration: 200, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 1, duration: 110, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 0, duration: 110, useNativeDriver: true }),
       ]).start();
     } else {
       Animated.parallel([
-        Animated.timing(opacity, { toValue: 0, duration: 180, useNativeDriver: true }),
-        Animated.timing(translateY, { toValue: -12, duration: 180, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0, duration: 90, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: -6, duration: 90, useNativeDriver: true }),
       ]).start();
     }
   }, [state.toast]);

@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Modal, ScrollView, Animated } from "react-native";
+import React from "react";
+import { View, Text, ScrollView } from "react-native";
 import { X, MapPin, Calendar, User, Building, Clock, CheckCircle, XCircle, AlertTriangle, DollarSign, Wrench, HardHat, Phone, Mail, Award, Activity, Shield, TrendingUp, FileText } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
 import { Badge } from "../../shared/components/Badge";
 import { ProgressBar } from "../../shared/components/ProgressBar";
 import { QuickButton } from "../../shared/components/QuickButton";
+import { ModalSheet } from "../../shared/components/ModalSheet";
 import { formatMoney, countdown } from "../../utils/helpers";
 import { Task, Complaint, Branch, User as UserType, Appliance, Approval, Visit } from "../../types/domain";
 
@@ -18,23 +19,9 @@ interface Props {
 
 export function DetailModal({ visible, onClose, entityType, entityId }: Props) {
   const { getTask, getComplaint, getBranch, getUser, getAppliance, tasks, complaints, approvals, visits, state, currentUser, submitTaskProof, markTaskDone, revokeTask, resolveComplaint, escalateComplaint, assignVendor, approveRequest, rejectRequest, showToast } = useApp();
-  const translateY = useRef(new Animated.Value(18)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
 
   const type = entityType || state.modalType;
   const id = entityId || state.modalData?.id;
-
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 180, useNativeDriver: true }),
-        Animated.spring(translateY, { toValue: 0, damping: 20, stiffness: 200, useNativeDriver: true }),
-      ]).start();
-    } else {
-      translateY.setValue(18);
-      opacity.setValue(0);
-    }
-  }, [visible]);
 
   const task = type === "task" ? getTask(id) || tasks.find(t => t.id === id) : undefined;
   const complaint = type === "complaint" ? getComplaint(id) : undefined;
@@ -406,35 +393,23 @@ export function DetailModal({ visible, onClose, entityType, entityId }: Props) {
   }
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity activeOpacity={1} onPress={onClose} style={{ flex: 1, backgroundColor: "rgba(15,23,42,0.4)", justifyContent: "center", alignItems: "center", padding: spacing.xl }}>
-        <Animated.View style={{ backgroundColor: colors.white, borderRadius: borderRadius["6xl"], width: "100%", maxWidth: 420, maxHeight: "85%", opacity, transform: [{ translateY }], borderWidth: 1, borderColor: "rgba(255,255,255,0.6)", ...shadows.modal }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.xl, paddingTop: spacing.xl }}>
-              <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.slate900 }}>Details</Text>
-              <TouchableOpacity onPress={onClose} style={{ padding: spacing.sm, borderRadius: borderRadius.md, backgroundColor: colors.slate50 }}>
-                <X size={14} color={colors.slate500} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView style={{ maxHeight: 600 }} contentContainerStyle={{ padding: spacing.xl, gap: spacing.xl }}>
-              {type === "task" && renderTaskContent()}
-              {type === "complaint" && renderComplaintContent()}
-              {type === "branch" && renderBranchContent()}
-              {type === "user" && renderUserContent()}
-              {type === "appliance" && renderApplianceContent()}
-              {type === "approval" && renderApprovalContent()}
-              {type === "visit" && renderVisitContent()}
-              {!task && !complaint && !branch && !user && !appliance && !approval && !visit ? (
-                <View style={{ alignItems: "center", padding: spacing["3xl"] }}>
-                  <AlertTriangle size={24} color={colors.slate400} />
-                  <Text style={{ fontSize: fontSize.sm, color: colors.slate500, marginTop: spacing.md }}>Entity not found</Text>
-                </View>
-              ) : null}
-            </ScrollView>
-          </TouchableOpacity>
-        </Animated.View>
-      </TouchableOpacity>
-    </Modal>
+    <ModalSheet visible={visible} onClose={onClose} title="Details">
+      <ScrollView style={{ maxHeight: 600 }} contentContainerStyle={{ gap: spacing.xl, paddingBottom: spacing.xl }}>
+        {type === "task" && renderTaskContent()}
+        {type === "complaint" && renderComplaintContent()}
+        {type === "branch" && renderBranchContent()}
+        {type === "user" && renderUserContent()}
+        {type === "appliance" && renderApplianceContent()}
+        {type === "approval" && renderApprovalContent()}
+        {type === "visit" && renderVisitContent()}
+        {!task && !complaint && !branch && !user && !appliance && !approval && !visit ? (
+          <View style={{ alignItems: "center", padding: spacing["3xl"] }}>
+            <AlertTriangle size={24} color={colors.slate400} />
+            <Text style={{ fontSize: fontSize.sm, color: colors.slate500, marginTop: spacing.md }}>Entity not found</Text>
+          </View>
+        ) : null}
+      </ScrollView>
+    </ModalSheet>
   );
 }
 

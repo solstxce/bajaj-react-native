@@ -10,15 +10,18 @@ interface Props {
 
 export function Card({ children, variant = "soft", style }: Props) {
   const isGlass = variant === "glass";
-  return (
+  const cardRadius = isGlass ? 28 : 24;
+
+  const cardContent = (
     <View
       style={[
         {
-          backgroundColor: isGlass ? colors.cardGlass : colors.card,
-          borderRadius: 24,
+          backgroundColor: isGlass ? "rgba(255,255,255,0.94)" : colors.card,
+          borderRadius: cardRadius,
           borderWidth: 1,
           borderColor: isGlass ? "rgba(255,255,255,0.6)" : colors.border,
           padding: 20,
+          overflow: "hidden",
           ...(isGlass ? shadows.shell : shadows.card),
         },
         style,
@@ -27,4 +30,6 @@ export function Card({ children, variant = "soft", style }: Props) {
       {children}
     </View>
   );
+
+  return cardContent;
 }

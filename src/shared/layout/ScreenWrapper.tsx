@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect, useRef } from "react";
-import { View, ScrollView, StyleSheet, Animated } from "react-native";
+import React, { ReactNode } from "react";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors, spacing } from "../../theme/theme";
 
@@ -9,42 +9,40 @@ interface Props {
 }
 
 export function ScreenWrapper({ children, scroll = true }: Props) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(12)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(opacity, { toValue: 1, duration: 300, useNativeDriver: true }),
-      Animated.timing(translateY, { toValue: 0, duration: 300, useNativeDriver: true }),
-    ]).start();
-  }, []);
-
-  const animatedStyle = { opacity, transform: [{ translateY }] };
-
   const content = scroll
     ? (
-      <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+      <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {children}
         </ScrollView>
-      </Animated.View>
+      </View>
     )
     : (
-      <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+      <View style={{ flex: 1 }}>
         <View style={styles.scrollContent}>
           {children}
         </View>
-      </Animated.View>
+      </View>
     );
 
   return (
     <View style={styles.root}>
+      {/* Background gradient layer */}
       <LinearGradient
         colors={["#E6F3FF", "#F4F8FC", "#EEF2F7"]}
         locations={[0, 0.4, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
+      />
+      {/* Radial overlay (simulated with another gradient) */}
+      <LinearGradient
+        colors={["rgba(0,91,172,0.08)", "transparent"]}
+        locations={[0, 0.3]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.5, y: 0.5 }}
+        style={[StyleSheet.absoluteFill, { opacity: 0.6 }]}
+        pointerEvents="none"
       />
       {content}
     </View>

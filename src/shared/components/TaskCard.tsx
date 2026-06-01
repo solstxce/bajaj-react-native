@@ -28,11 +28,11 @@ export function TaskCard({ task, compact = false, actions }: Props) {
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center", marginBottom: spacing.md }}>
             <Badge label={task.status} type={task.status} />
             <Badge label={task.priority} type={task.priority} />
-            <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>{task.schedule}</Text>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.slate400, textTransform: "uppercase", letterSpacing: 0.3 }}>{task.schedule}</Text>
           </View>
           <View style={{ gap: spacing.xs }}>
-            <Text style={{ fontSize: fontSize.xl, fontWeight: "400", color: colors.slate900 }}>{task.title}</Text>
-            <Text style={{ fontSize: fontSize.sm, color: colors.slate500 }}>{branch?.name} | {task.zone} | Assigned: {assignee}</Text>
+            <Text style={{ fontSize: fontSize.xl, fontWeight: "700", color: colors.slate900 }}>{task.title}</Text>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "500", color: colors.slate500 }}>{branch?.name} | {task.zone} | Assigned: {assignee}</Text>
           </View>
 
           {compact ? null : (
@@ -40,19 +40,19 @@ export function TaskCard({ task, compact = false, actions }: Props) {
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.lg, marginTop: spacing.xl }}>
                 <View style={{ flex: 1, minWidth: 100 }}>
                   <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Deadline</Text>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{countdown(task.deadline, "2026-04-26T11:20:00")}</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.slate900 }}>{countdown(task.deadline, "2026-04-26T11:20:00")}</Text>
                 </View>
                 <View style={{ flex: 1, minWidth: 100 }}>
                   <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Checklist</Text>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{task.checklistDone}/{task.checklistTotal} items</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.slate900 }}>{task.checklistDone}/{task.checklistTotal} items</Text>
                 </View>
                 <View style={{ flex: 1, minWidth: 100 }}>
                   <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Proof rule</Text>
-                  <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{task.proofLabel}</Text>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.slate900 }}>{task.proofLabel}</Text>
                 </View>
                 <View style={{ flex: 1, minWidth: 100 }}>
                   <Text style={{ fontSize: fontSize.xs, color: colors.slate400, marginBottom: 2 }}>Escalation</Text>
-                  <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate900 }}>{task.escalation}</Text>
+                  <Text numberOfLines={2} style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.slate900 }}>{task.escalation}</Text>
                 </View>
               </View>
               <View style={{ marginTop: spacing.lg }}>
@@ -63,7 +63,7 @@ export function TaskCard({ task, compact = false, actions }: Props) {
 
           {task.redoReason ? (
             <View style={{ marginTop: spacing.lg, backgroundColor: colors.red50, borderRadius: borderRadius.lg, padding: spacing.lg }}>
-              <Text style={{ fontSize: fontSize.sm, color: colors.red700 }}><Text style={{ fontWeight: "400" }}>Redo note:</Text> {task.redoReason}</Text>
+              <Text style={{ fontSize: fontSize.sm, color: colors.red700 }}><Text style={{ fontWeight: "600" }}>Redo note:</Text> {task.redoReason}</Text>
             </View>
           ) : null}
         </View>
@@ -73,7 +73,7 @@ export function TaskCard({ task, compact = false, actions }: Props) {
             onPress={() => openTaskDetail(task.id)}
             style={{ borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
           >
-            <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.slate700 }}>Open detail</Text>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.slate700 }}>Open detail</Text>
           </TouchableOpacity>
           {actions?.map((a, i) => (
             <TouchableOpacity
@@ -81,7 +81,7 @@ export function TaskCard({ task, compact = false, actions }: Props) {
               onPress={a.onPress}
               style={{ borderRadius: borderRadius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: a.primary ? colors.success : colors.slate900, flexDirection: "row", alignItems: "center", gap: spacing.sm }}
             >
-              <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>{a.label}</Text>
+              <Text style={{ fontSize: fontSize.sm, fontWeight: "600", color: colors.white }}>{a.label}</Text>
             </TouchableOpacity>
           ))}
         </View>

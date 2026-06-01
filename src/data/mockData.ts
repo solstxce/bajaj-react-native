@@ -52,7 +52,7 @@ export const ROLES: Record<RoleId, RoleDef> = {
 };
 
 export const initialTabState: TabState = {
-  lcTasks: "all", lcBranch: "appliances",
+  lcTasks: "all", lcBranch: "workers",
   managerMonitoring: "lc", managerIssues: "open", approvals: "pending",
   notifications: "all", complaints: "active", rmAlerts: "critical", rmIntelligence: "performance", rmUsers: "active",
 };

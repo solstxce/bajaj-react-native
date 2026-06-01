@@ -1,16 +1,7 @@
 import { Platform, ViewStyle } from "react-native";
 
-export const headingFont = Platform.select({
-  ios: "Manrope",
-  android: "sans-serif-medium",
-  default: "Manrope",
-});
-
-export const bodyFont = Platform.select({
-  ios: "Manrope",
-  android: "sans-serif",
-  default: "Manrope",
-});
+export const headingFont = "Manrope_800ExtraBold";
+export const bodyFont = "Manrope_400Regular";
 
 export const fontWeight = {
   regular: "400" as const,

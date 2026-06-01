@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Animated } from "react-native";
-import { Search, X, Home, ListChecks, Wrench, MapPin, Bell, User, Building, DollarSign, Activity, FileText, Clock, ChevronRight } from "lucide-react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { Search, X, ChevronRight } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
-import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
+import { colors, fontSize, spacing, borderRadius, bodyFont } from "../../theme/theme";
 import { Badge } from "../../shared/components/Badge";
+import { ModalSheet } from "../../shared/components/ModalSheet";
 import { Task, Complaint, Branch, User as UserType, Approval, Visit, NotificationItem } from "../../types/domain";
 
 interface Props {
@@ -16,19 +17,11 @@ export function SearchModal({ visible, onClose, onSelectResult }: Props) {
   const { tasks, complaints, users, branches, approvals, visits, getBranch } = useApp();
   const [query, setQuery] = useState("");
   const inputRef = useRef<TextInput>(null);
-  const translateY = useRef(new Animated.Value(18)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
-      Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.spring(translateY, { toValue: 0, damping: 20, stiffness: 200, useNativeDriver: true }),
-      ]).start();
       setTimeout(() => inputRef.current?.focus(), 250);
     } else {
-      translateY.setValue(18);
-      opacity.setValue(0);
       setQuery("");
     }
   }, [visible]);
@@ -46,59 +39,53 @@ export function SearchModal({ visible, onClose, onSelectResult }: Props) {
   const total = tasksFiltered.length + complaintsFiltered.length + usersFiltered.length + branchesFiltered.length + approvalsFiltered.length + visitsFiltered.length;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity activeOpacity={1} onPress={onClose} style={{ flex: 1, backgroundColor: "rgba(15,23,42,0.5)", justifyContent: "flex-start", paddingTop: 80, paddingHorizontal: spacing.xl }}>
-        <Animated.View style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], opacity, transform: [{ translateY }], borderWidth: 1, borderColor: "rgba(255,255,255,0.6)", ...shadows.modal }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border }}>
-              <Search size={16} color={colors.textSecondary} strokeWidth={1.8} />
-              <TextInput
-                ref={inputRef}
-                value={query}
-                onChangeText={setQuery}
-                placeholder="Search tasks, complaints, people, branches..."
-                placeholderTextColor={colors.textSecondary}
-                style={{ flex: 1, fontSize: fontSize.md, color: colors.text }}
-              />
-              {query.length > 0 ? (
-                <TouchableOpacity onPress={() => setQuery("")} style={{ padding: spacing.xs }}>
-                  <X size={14} color={colors.textSecondary} />
-                </TouchableOpacity>
-              ) : null}
-            </View>
-            {q.length > 0 ? (
-              <ScrollView style={{ maxHeight: 400 }} contentContainerStyle={{ padding: spacing.sm }}>
-                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}>{total} results</Text>
-                {renderGroup("Tasks", results.tasks, "task", colors.brand, onSelectResult, onClose, id => {
-                  const t = tasks.find(t => t.id === id);
-                  return t ? { title: t.title, subtitle: getBranch(t.branchId)?.name + " | " + t.status, badge: t.priority } : undefined;
-                })}
-                {renderGroup("Complaints", results.complaints, "complaint", colors.error, onSelectResult, onClose, id => {
-                  const c = complaints.find(c => c.id === id);
-                  return c ? { title: c.title, subtitle: c.type + " | " + c.status, badge: c.priority } : undefined;
-                })}
-                {renderGroup("People", results.users, "user", colors.brandSecondary, onSelectResult, onClose, id => {
-                  const u = users.find(u => u.id === id);
-                  return u ? { title: u.name, subtitle: u.position + " — " + (getBranch(u.branchId)?.name || ""), badge: u.role } : undefined;
-                })}
-                {renderGroup("Branches", results.branches, "branch", colors.success, onSelectResult, onClose, id => {
-                  const b = branches.find(b => b.id === id);
-                  return b ? { title: b.name, subtitle: b.code + " | " + b.city, badge: b.health + "%" } : undefined;
-                })}
-                {renderGroup("Approvals", results.approvals, "approval", colors.warning, onSelectResult, onClose, id => {
-                  const a = approvals.find(a => a.id === id);
-                  return a ? { title: a.title, subtitle: a.kind + " | " + a.stage, badge: a.status } : undefined;
-                })}
-                {renderGroup("Visits", results.visits, "visit", colors.info, onSelectResult, onClose, id => {
-                  const v = visits.find(v => v.id === id);
-                  return v ? { title: v.purpose, subtitle: (getBranch(v.branchId)?.name || "") + " | " + v.scheduledAt, badge: v.status } : undefined;
-                })}
-              </ScrollView>
-            ) : null}
+    <ModalSheet visible={visible} onClose={onClose}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.lg, backgroundColor: colors.slate50, borderRadius: borderRadius.md, paddingHorizontal: 14, paddingVertical: 12 }}>
+        <Search size={16} color={colors.textSecondary} strokeWidth={1.8} />
+        <TextInput
+          ref={inputRef}
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search tasks, complaints, people, branches..."
+          placeholderTextColor={colors.textSecondary}
+          style={{ flex: 1, fontSize: fontSize.md, color: colors.text, fontFamily: bodyFont }}
+        />
+        {query.length > 0 ? (
+          <TouchableOpacity onPress={() => setQuery("")} style={{ padding: spacing.xs }}>
+            <X size={14} color={colors.textSecondary} />
           </TouchableOpacity>
-        </Animated.View>
-      </TouchableOpacity>
-    </Modal>
+        ) : null}
+      </View>
+      {q.length > 0 ? (
+        <ScrollView style={{ maxHeight: 400 }} contentContainerStyle={{ padding: spacing.sm }}>
+          <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}>{total} results</Text>
+          {renderGroup("Tasks", results.tasks, "task", colors.brand, onSelectResult, onClose, id => {
+            const t = tasks.find(t => t.id === id);
+            return t ? { title: t.title, subtitle: getBranch(t.branchId)?.name + " | " + t.status, badge: t.priority } : undefined;
+          })}
+          {renderGroup("Complaints", results.complaints, "complaint", colors.error, onSelectResult, onClose, id => {
+            const c = complaints.find(c => c.id === id);
+            return c ? { title: c.title, subtitle: c.type + " | " + c.status, badge: c.priority } : undefined;
+          })}
+          {renderGroup("People", results.users, "user", colors.brandSecondary, onSelectResult, onClose, id => {
+            const u = users.find(u => u.id === id);
+            return u ? { title: u.name, subtitle: u.position + " — " + (getBranch(u.branchId)?.name || ""), badge: u.role } : undefined;
+          })}
+          {renderGroup("Branches", results.branches, "branch", colors.success, onSelectResult, onClose, id => {
+            const b = branches.find(b => b.id === id);
+            return b ? { title: b.name, subtitle: b.code + " | " + b.city, badge: b.health + "%" } : undefined;
+          })}
+          {renderGroup("Approvals", results.approvals, "approval", colors.warning, onSelectResult, onClose, id => {
+            const a = approvals.find(a => a.id === id);
+            return a ? { title: a.title, subtitle: a.kind + " | " + a.stage, badge: a.status } : undefined;
+          })}
+          {renderGroup("Visits", results.visits, "visit", colors.info, onSelectResult, onClose, id => {
+            const v = visits.find(v => v.id === id);
+            return v ? { title: v.purpose, subtitle: (getBranch(v.branchId)?.name || "") + " | " + v.scheduledAt, badge: v.status } : undefined;
+          })}
+        </ScrollView>
+      ) : null}
+    </ModalSheet>
   );
 }
 
