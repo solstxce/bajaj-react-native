@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Animated } from "react-native";
-import { X, Send, Plus, Wrench, Briefcase, DollarSign, Calendar, Zap, ChevronRight, AlertCircle } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { Send, Plus, Wrench, DollarSign, Calendar, Zap, AlertCircle } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
-import { colors, fontSize, spacing, borderRadius, shadows } from "../../theme/theme";
+import { colors, fontSize, spacing, borderRadius, bodyFont, fontWeight } from "../../theme/theme";
 import { RoleId } from "../../types/domain";
-import { validate, complaintSchema, taskSchema, applianceSchema, expenseSchema, visitSchema, userSchema, ValidationResult } from "../../utils/validation";
+import { validate, complaintSchema, taskSchema, applianceSchema, expenseSchema, visitSchema, userSchema } from "../../utils/validation";
+import { ModalSheet } from "../../shared/components/ModalSheet";
 
 interface Props {
   visible: boolean;
@@ -15,20 +16,11 @@ export function FormModal({ visible, onClose }: Props) {
   const { state, createComplaint, createTask, createAppliance, createExpense, createVisit, createUser, branches, currentUser, showToast } = useApp();
   const [formType, setFormType] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const translateY = useRef(new Animated.Value(18)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
       setFormType(null);
       setErrors({});
-      Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 180, useNativeDriver: true }),
-        Animated.spring(translateY, { toValue: 0, damping: 20, stiffness: 200, useNativeDriver: true }),
-      ]).start();
-    } else {
-      translateY.setValue(18);
-      opacity.setValue(0);
     }
   }, [visible]);
 
@@ -101,7 +93,7 @@ export function FormModal({ visible, onClose }: Props) {
 
   const selectOptions = (label: string, options: string[], value: string, onValue: (v: string) => void, errorKey?: string) => (
     <View>
-      <Text style={{ fontSize: fontSize.xs, fontWeight: "400", color: colors.textSecondary, marginBottom: spacing.xs }}>{label}</Text>
+      <Text style={{ fontSize: fontSize.xs, fontFamily: bodyFont, fontWeight: fontWeight.semibold, color: colors.slate400, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: spacing.xs }}>{label}</Text>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
         {options.map((opt) => (
           <TouchableOpacity
@@ -128,8 +120,8 @@ export function FormModal({ visible, onClose }: Props) {
         value={val}
         onChangeText={(v) => { set(v); if (errorKey) setErrors((prev) => { const next = { ...prev }; delete next[errorKey]; return next; }); }}
         placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
-        style={{ borderRadius: borderRadius.lg, borderWidth: 1, borderColor: errorKey && errors[errorKey] ? colors.error : colors.border, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, fontSize: fontSize.sm, color: colors.text, ...extra }}
+        placeholderTextColor={colors.slate400}
+        style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.md, paddingHorizontal: 14, paddingVertical: 12, fontFamily: bodyFont, fontSize: fontSize.sm, color: colors.text, borderWidth: errorKey && errors[errorKey] ? 1 : 0, borderColor: colors.error, ...extra }}
       />
       {errorKey && showError(errorKey)}
     </View>
@@ -141,19 +133,19 @@ export function FormModal({ visible, onClose }: Props) {
         value={val}
         onChangeText={(v) => { set(v); if (errorKey) setErrors((prev) => { const next = { ...prev }; delete next[errorKey]; return next; }); }}
         placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={colors.slate400}
         multiline
         numberOfLines={4}
-        style={{ borderRadius: borderRadius.lg, borderWidth: 1, borderColor: errorKey && errors[errorKey] ? colors.error : colors.border, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, fontSize: fontSize.sm, minHeight: 90, color: colors.text, textAlignVertical: "top" }}
+        style={{ backgroundColor: colors.slate50, borderRadius: borderRadius.md, paddingHorizontal: 14, paddingVertical: 12, fontFamily: bodyFont, fontSize: fontSize.sm, minHeight: 90, color: colors.text, textAlignVertical: "top", borderWidth: errorKey && errors[errorKey] ? 1 : 0, borderColor: colors.error }}
       />
       {errorKey && showError(errorKey)}
     </View>
   );
 
   const submitBtn = (label: string, onPress: () => void) => (
-    <TouchableOpacity onPress={onPress} style={{ backgroundColor: colors.brand, borderRadius: borderRadius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: spacing.sm }}>
+    <TouchableOpacity onPress={onPress} style={{ backgroundColor: colors.slate900, borderRadius: borderRadius.md, height: 48, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: spacing.sm }}>
       <Send size={14} color={colors.white} strokeWidth={2} />
-      <Text style={{ fontSize: fontSize.sm, fontWeight: "400", color: colors.white }}>{label}</Text>
+      <Text style={{ fontSize: fontSize.sm, fontFamily: bodyFont, fontWeight: fontWeight.semibold, color: colors.white }}>{label}</Text>
     </TouchableOpacity>
   );
 
@@ -389,29 +381,15 @@ export function FormModal({ visible, onClose }: Props) {
   const selectedForm = formType ? forms[formType] : null;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <TouchableOpacity activeOpacity={1} onPress={handleClose} style={{ flex: 1, backgroundColor: "rgba(15,23,42,0.5)", justifyContent: "center", alignItems: "center", padding: spacing.xl }}>
-        <Animated.View style={{ backgroundColor: colors.card, borderRadius: borderRadius["6xl"], width: "100%", maxWidth: 420, maxHeight: "85%", opacity, transform: [{ translateY }], borderWidth: 1, borderColor: "rgba(255,255,255,0.6)", ...shadows.modal }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.xl, paddingTop: spacing.xl }}>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: fontSize.lg, fontWeight: "400", color: colors.text }}>
-                  {selectedForm ? selectedForm.title : "Quick actions"}
-                </Text>
-                <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, marginTop: spacing.xs }}>
-                  {selectedForm ? selectedForm.subtitle : "Jump into the most common operational workflows"}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={handleClose} style={{ padding: spacing.sm, borderRadius: borderRadius.md, backgroundColor: colors.slate50 }}>
-                <X size={14} color={colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView style={{ maxHeight: 500 }} contentContainerStyle={{ padding: spacing.xl, gap: spacing.xl }}>
-              {selectedForm ? selectedForm.render() : forms.quick.render()}
-            </ScrollView>
-          </TouchableOpacity>
-        </Animated.View>
-      </TouchableOpacity>
-    </Modal>
+    <ModalSheet
+      visible={visible}
+      onClose={handleClose}
+      title={selectedForm ? selectedForm.title : "Quick actions"}
+      subtitle={selectedForm ? selectedForm.subtitle : "Jump into the most common operational workflows"}
+    >
+      <ScrollView style={{ maxHeight: 500 }} contentContainerStyle={{ gap: spacing.xl }}>
+        {selectedForm ? selectedForm.render() : forms.quick.render()}
+      </ScrollView>
+    </ModalSheet>
   );
 }

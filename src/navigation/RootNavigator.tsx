@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, SafeAreaView, Platform } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Home, ListChecks, Wrench, MapPin, Bell, IdCard, BarChart3, AlertCircle, Building, LineChart, Stamp, Route, Satellite, TriangleAlert, Wallet, ChartColumn, Users, Sliders, Circle } from "lucide-react-native";
 import { useApp } from "../context/AppContext";
 import { ROLES } from "../data/mockData";
-import { colors, fontSize, spacing, borderRadius, shadows } from "../theme/theme";
-import { pageIcon } from "../theme/styleMaps";
+import { colors, fontSize } from "../theme/theme";
+import { pageIcon, roleAccent } from "../theme/styleMaps";
 import { TopBar } from "../shared/layout/TopBar";
+import { ResponsiveShell } from "../shared/layout/ResponsiveShell";
 import { Toast } from "../shared/components/Toast";
 import { RoleSwitcherModal } from "../modals/forms/RoleSwitcherModal";
 import { FormModal } from "../modals/forms/FormModal";
@@ -45,8 +45,6 @@ import { RmSettingsScreen } from "../roles/rm/RmSettingsScreen";
 import { RmNotificationsScreen } from "../roles/rm/RmNotificationsScreen";
 import { RmProfileScreen } from "../roles/rm/RmProfileScreen";
 import { RmAttendanceScreen } from "../roles/rm/RmAttendanceScreen";
-
-const Tab = createBottomTabNavigator();
 
 const screenRegistry: Record<string, React.ComponentType> = {};
 
@@ -95,103 +93,164 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Users, Sliders, Circle,
 };
 
-function TabIcon({ pageId, focused, color }: { pageId: string; focused: boolean; color: string }) {
-  const iconName = pageIcon(pageId);
-  const Icon = iconMap[iconName] || Circle;
+function GlassTabBar({ pages }: { pages: Array<{ id: string; label: string }> }) {
+  const { state, setPage } = useApp();
+  const insets = useSafeAreaInsets();
+  const accent = roleAccent(state.role).bg;
+  const visibleRoutes = pages.slice(0, 5);
+
+  const compactLabel = (label: string, pageId: string) => {
+    const map: Record<string, string> = {
+      complaints: "Issues",
+      attendance: "Attend",
+      notifications: "Alerts",
+      monitoring: "Monitor",
+      intelligence: "Intel",
+      approvals: "Approve",
+    };
+    return map[pageId] || label;
+  };
+
   return (
-    <View style={{
-      width: 44,
-      height: 32,
-      borderRadius: 12,
-      backgroundColor: focused ? colors.brandLight : "transparent",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>
-      <Icon size={22} color={focused ? colors.brand : color} strokeWidth={focused ? 2.4 : 1.8} />
+    <View
+      style={{
+        position: "absolute",
+        bottom: 14 + insets.bottom,
+        left: 16,
+        right: 16,
+        alignItems: "center",
+      }}
+      pointerEvents="box-none"
+    >
+      <View
+        style={{
+          width: "100%",
+          maxWidth: 520,
+          borderRadius: 30,
+          overflow: "hidden",
+          borderWidth: 1,
+          borderColor: "rgba(226,232,240,0.95)",
+          backgroundColor: "rgba(255,255,255,0.96)",
+          shadowColor: colors.slate900,
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.08,
+          shadowRadius: 14,
+          elevation: 6,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            height: 66,
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 8,
+            paddingVertical: 7,
+          }}
+        >
+          {visibleRoutes.map((route) => {
+            const isFocused = state.page === route.id;
+            const iconName = pageIcon(route.id);
+            const Icon = iconMap[iconName] || Circle;
+            const label = compactLabel(route.label, route.id);
+
+            return (
+              <TouchableOpacity
+                key={route.id}
+                onPress={() => {
+                  if (!isFocused) {
+                    setPage(route.id);
+                  }
+                }}
+                activeOpacity={0.7}
+                style={{
+                  flex: isFocused ? 1.25 : 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 50,
+                  paddingHorizontal: isFocused ? 10 : 6,
+                  borderRadius: 24,
+                  backgroundColor: isFocused ? "rgba(15,23,42,0.96)" : "transparent",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                  }}
+                >
+                  <View style={{ alignItems: "center", justifyContent: "center" }}>
+                    <Icon
+                      size={20}
+                      color={isFocused ? colors.white : colors.slate500}
+                      strokeWidth={isFocused ? 2.25 : 1.85}
+                    />
+                    {!isFocused ? (
+                      <View
+                        style={{
+                          width: 4,
+                          height: 4,
+                          borderRadius: 2,
+                          backgroundColor: "transparent",
+                          marginTop: 3,
+                        }}
+                      />
+                    ) : null}
+                  </View>
+                  {isFocused ? (
+                    <View style={{ maxWidth: 74 }}>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "800",
+                          color: colors.white,
+                          letterSpacing: 0.1,
+                        }}
+                        numberOfLines={1}
+                      >
+                        {label}
+                      </Text>
+                      <View
+                        style={{
+                          width: 18,
+                          height: 3,
+                          borderRadius: 99,
+                          backgroundColor: accent,
+                          marginTop: 4,
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
     </View>
   );
 }
 
-function NavigationSync() {
-  const { state } = useApp();
-  const navigation = useNavigation();
-  const prevPageRef = useRef(state.page);
-
-  useEffect(() => {
-    const prevPage = prevPageRef.current;
-    prevPageRef.current = state.page;
-    if (prevPage !== state.page) {
-      (navigation as any).navigate(state.page);
-    }
-  }, [state.page, navigation]);
-
-  return null;
-}
-
-function MainTabs() {
+function MainTabs({ isTablet }: { isTablet: boolean }) {
   const { state, setPage } = useApp();
   const roleDef = ROLES[state.role];
   const pages = roleDef.pages;
+  const currentPage = pages.some((page) => page.id === state.page) ? state.page : pages[0]?.id;
+  const Screen = getScreen(state.role, currentPage);
+
+  useEffect(() => {
+    if (currentPage && currentPage !== state.page) {
+      setPage(currentPage);
+    }
+  }, [currentPage, state.page, setPage]);
 
   return (
-    <Tab.Navigator
-      key={state.role}
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: true,
-        tabBarHideOnKeyboard: true,
-        tabBarStyle: {
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: colors.white,
-          borderTopColor: colors.slate200,
-          borderTopWidth: 1,
-          height: 84,
-          paddingTop: 12,
-          paddingBottom: 24,
-          elevation: 10,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.08,
-          shadowRadius: 6,
-        },
-        tabBarActiveTintColor: colors.brand,
-        tabBarInactiveTintColor: colors.textSecondary,
-        tabBarLabelStyle: { 
-          fontSize: 9, 
-          fontWeight: "700", 
-          marginTop: 4,
-          textTransform: "uppercase",
-          letterSpacing: 0.6,
-        },
-        tabBarItemStyle: { 
-          height: 60,
-          marginHorizontal: 16,
-          paddingHorizontal: 0,
-        },
-      }}
-    >
-      <Tab.Screen
-        name="__tabSync"
-        component={NavigationSync}
-        options={{ tabBarButton: () => null, headerShown: false }}
-      />
-      {pages.map((page, index) => (
-        <Tab.Screen
-          key={page.id}
-          name={page.id}
-          component={getScreen(state.role, page.id)}
-          listeners={{ tabPress: () => setPage(page.id) }}
-          options={{
-            tabBarLabel: page.label,
-            tabBarIcon: ({ focused, color }) => <TabIcon pageId={page.id} focused={focused} color={color} />,
-            ...(index >= 5 ? { tabBarButton: () => null } : {}),
-          }}
-        />
-      ))}
-    </Tab.Navigator>
+    <View style={{ flex: 1 }}>
+      <Screen />
+      {!isTablet ? <GlassTabBar pages={pages} /> : null}
+    </View>
   );
 }
 
@@ -202,6 +261,8 @@ export function RootNavigator() {
   const [auditModalVisible, setAuditModalVisible] = useState(false);
   const [detailModal, setDetailModal] = useState<{ entityType: string; entityId: number } | null>(null);
   const { state, setPage, dispatch } = useApp();
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
 
   useEffect(() => {
     const type = state.modalType;
@@ -218,8 +279,8 @@ export function RootNavigator() {
   }, [state.modalType, state.modalData]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
-      <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: isTablet ? "#EEF2F7" : colors.bg }}>
+      <ResponsiveShell isTablet={isTablet}>
         <TopBar
           onRolePress={() => setRoleModalVisible(true)}
           onSearchPress={() => setSearchModalVisible(true)}
@@ -227,7 +288,7 @@ export function RootNavigator() {
           onNotificationPress={() => setPage("notifications")}
           onProfilePress={() => setPage("profile")}
         />
-        <MainTabs />
+        <MainTabs isTablet={isTablet} />
         <Toast />
         <RoleSwitcherModal visible={roleModalVisible} onClose={() => setRoleModalVisible(false)} />
         <FormModal visible={formModalVisible} onClose={() => setFormModalVisible(false)} />
@@ -245,7 +306,7 @@ export function RootNavigator() {
             entityId={detailModal.entityId}
           />
         ) : null}
-      </View>
-    </SafeAreaView>
+      </ResponsiveShell>
+    </View>
   );
 }
