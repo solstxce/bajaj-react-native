@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import {
   Building,
   TriangleAlert,
@@ -9,6 +9,7 @@ import {
   Stamp,
   ChevronRight,
   MapPin,
+  Search,
 } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
@@ -21,6 +22,11 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function BranchManagerHomeScreen() {
+  const [showAllBranches, setShowAllBranches] = useState(false);
+  const [showAllVisits, setShowAllVisits] = useState(false);
+  const [showAllApprovals, setShowAllApprovals] = useState(false);
+  const [branchSearch, setBranchSearch] = useState("");
+  const [locationMode, setLocationMode] = useState<"state" | "district">("state");
   const {
     scopedBranches,
     scopedApprovals,
@@ -44,13 +50,45 @@ export function BranchManagerHomeScreen() {
   const totalBudget = scopedBranches.reduce((s, b) => s + b.monthlyBudget, 0);
   const totalUsed = scopedBranches.reduce((s, b) => s + b.usedBudget, 0);
 
+  const getDistrict = (branch: typeof scopedBranches[number]) => branch.name || branch.city || "Unknown district";
+  const getState = (branch: typeof scopedBranches[number]) => {
+    const parts = branch.address?.split(",").map((part) => part.trim()).filter(Boolean) || [];
+    return parts[parts.length - 1] || branch.city || "Unknown state";
+  };
+
+  const query = branchSearch.trim().toLowerCase();
+  const searchedBranches = scopedBranches.filter((branch) => {
+    if (!query) return true;
+    return [branch.name, branch.city, branch.address, branch.code, getState(branch), getDistrict(branch)]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query));
+  });
+
+  const locationGroups = searchedBranches.reduce<Record<string, number>>((acc, branch) => {
+    const key = locationMode === "state" ? getState(branch) : getDistrict(branch);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const locationGroupEntries = Object.entries(locationGroups).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
   const pendingApprovals = scopedApprovals.filter((a) => a.status === "Pending");
+  const atRiskBranches = searchedBranches.filter((b) => b.criticalAlerts > 0 || b.sla < 90);
+  const budgetPressureBranches = searchedBranches.filter((b) => b.monthlyBudget > 0 && b.usedBudget / b.monthlyBudget > 0.75);
+  const stableBranches = searchedBranches.filter((b) => b.criticalAlerts === 0 && b.sla >= 90);
+  const sortedBranches = [...searchedBranches].sort((a, b) => {
+    const aScore = a.criticalAlerts * 10 + (a.sla < 90 ? 5 : 0) + (a.usedBudget / Math.max(a.monthlyBudget, 1) > 0.75 ? 3 : 0);
+    const bScore = b.criticalAlerts * 10 + (b.sla < 90 ? 5 : 0) + (b.usedBudget / Math.max(b.monthlyBudget, 1) > 0.75 ? 3 : 0);
+    return bScore - aScore;
+  });
+  const visibleBranches = showAllBranches ? sortedBranches : sortedBranches.slice(0, 3);
 
   // Visits scoped to this manager's branches
   const scopedVisits = visits.filter(
     (v) => scopedBranchIds.includes(v.branchId)
   );
   const incompleteVisits = scopedVisits.filter((v) => v.status !== "Completed");
+  const visibleVisits = showAllVisits ? scopedVisits : scopedVisits.slice(0, 3);
+  const visibleApprovals = showAllApprovals ? pendingApprovals : pendingApprovals.slice(0, 2);
 
   // Critical notifications for alert strip
   const criticalAlerts = scopedNotifications.filter(
@@ -168,13 +206,27 @@ export function BranchManagerHomeScreen() {
       {/* Branch Comparison Snapshot */}
       <SectionHeader title="Branch comparison snapshot" subtitle="Tap any branch for deeper operational, financial and staffing detail" />
       <Card variant="glass">
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginBottom: spacing.xl }}>
+          <View style={{ flex: 1, minWidth: 120, backgroundColor: colors.rose50, borderRadius: borderRadius["2xl"], padding: spacing.lg }}>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.rose700, textTransform: "uppercase", letterSpacing: 1 }}>At risk</Text>
+            <Text style={{ marginTop: spacing.xs, fontSize: fontSize["3xl"], fontWeight: "800", color: colors.rose700 }}>{atRiskBranches.length}</Text>
+          </View>
+          <View style={{ flex: 1, minWidth: 120, backgroundColor: colors.amber50, borderRadius: borderRadius["2xl"], padding: spacing.lg }}>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.amber700, textTransform: "uppercase", letterSpacing: 1 }}>Budget</Text>
+            <Text style={{ marginTop: spacing.xs, fontSize: fontSize["3xl"], fontWeight: "800", color: colors.amber700 }}>{budgetPressureBranches.length}</Text>
+          </View>
+          <View style={{ flex: 1, minWidth: 120, backgroundColor: colors.emerald50, borderRadius: borderRadius["2xl"], padding: spacing.lg }}>
+            <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.emerald700, textTransform: "uppercase", letterSpacing: 1 }}>Stable</Text>
+            <Text style={{ marginTop: spacing.xs, fontSize: fontSize["3xl"], fontWeight: "800", color: colors.emerald700 }}>{stableBranches.length}</Text>
+          </View>
+        </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.lg }}>
           <View>
             <Text style={{ fontSize: fontSize.xl, fontWeight: "800", color: colors.slate900 }}>
               Your branches
             </Text>
             <Text style={{ fontSize: fontSize.sm, color: colors.slate500, marginTop: spacing.xs }}>
-              {scopedBranches.length} branches across your territory
+              {searchedBranches.length} of {scopedBranches.length} branches across your territory
             </Text>
           </View>
           <QuickButton
@@ -184,8 +236,40 @@ export function BranchManagerHomeScreen() {
             onPress={() => setPage("branches")}
           />
         </View>
+        <View style={{ marginBottom: spacing.xl }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.slate200, borderRadius: 999, paddingHorizontal: spacing.xl, height: 44 }}>
+            <Search size={16} color={colors.slate400} />
+            <TextInput
+              value={branchSearch}
+              onChangeText={setBranchSearch}
+              placeholder="Search by branch, district, state or code"
+              placeholderTextColor={colors.slate400}
+              style={{ flex: 1, fontSize: fontSize.sm, color: colors.slate900, paddingVertical: 0 }}
+            />
+          </View>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
+            {(["state", "district"] as const).map((mode) => (
+              <TouchableOpacity
+                key={mode}
+                onPress={() => setLocationMode(mode)}
+                style={{ borderRadius: 999, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: locationMode === mode ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.slate200 }}
+              >
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: locationMode === mode ? colors.white : colors.slate600, textTransform: "capitalize" }}>{mode} wise</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {locationGroupEntries.length > 0 ? (
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
+              {locationGroupEntries.map(([name, count]) => (
+                <View key={name} style={{ borderRadius: 999, backgroundColor: colors.slate50, borderWidth: 1, borderColor: colors.slate200, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }}>
+                  <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.slate600 }}>{name} · {count}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+        </View>
         <View style={{ gap: spacing.md }}>
-          {scopedBranches.map((branch) => (
+          {visibleBranches.map((branch) => (
             <TouchableOpacity
               key={branch.id}
               onPress={() => openBranchDetail(branch.id)}
@@ -260,6 +344,16 @@ export function BranchManagerHomeScreen() {
             </TouchableOpacity>
           ))}
         </View>
+        {sortedBranches.length > 3 ? (
+          <TouchableOpacity
+            onPress={() => setShowAllBranches((value) => !value)}
+            style={{ marginTop: spacing.lg, alignSelf: "center", paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: borderRadius.lg, backgroundColor: colors.slate900 }}
+          >
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.white }}>
+              {showAllBranches ? "Hide branches" : `Show ${sortedBranches.length - 3} more`}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </Card>
 
       {/* Manager Watchlist */}
@@ -349,7 +443,7 @@ export function BranchManagerHomeScreen() {
       />
       <Card>
         {scopedVisits.length > 0 ? (
-          scopedVisits.map((visit, i) => {
+          visibleVisits.map((visit, i) => {
             const branch = getBranch(visit.branchId);
             return (
               <React.Fragment key={visit.id}>
@@ -378,7 +472,7 @@ export function BranchManagerHomeScreen() {
                     <Badge label={visit.status} type={visit.status} />
                   </View>
                 </TouchableOpacity>
-                {i < scopedVisits.length - 1 ? (
+                {i < visibleVisits.length - 1 ? (
                   <View style={{ height: 1, backgroundColor: colors.slate100 }} />
                 ) : null}
               </React.Fragment>
@@ -389,6 +483,13 @@ export function BranchManagerHomeScreen() {
             No visits scheduled
           </Text>
         )}
+        {scopedVisits.length > 3 ? (
+          <TouchableOpacity onPress={() => setShowAllVisits((value) => !value)} style={{ alignSelf: "center", marginTop: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: borderRadius.lg, backgroundColor: colors.slate100 }}>
+            <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.slate700 }}>
+              {showAllVisits ? "Hide visits" : `Show ${scopedVisits.length - 3} more visits`}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </Card>
 
       {/* Pending Approvals Quick View */}
@@ -407,7 +508,7 @@ export function BranchManagerHomeScreen() {
           />
           <Card variant="glass">
             <View style={{ gap: spacing.md }}>
-              {pendingApprovals.slice(0, 3).map((a) => {
+              {visibleApprovals.map((a) => {
                 const branch = getBranch(a.branchId);
                 return (
                   <View
@@ -461,6 +562,13 @@ export function BranchManagerHomeScreen() {
                 );
               })}
             </View>
+            {pendingApprovals.length > 2 ? (
+              <TouchableOpacity onPress={() => setShowAllApprovals((value) => !value)} style={{ alignSelf: "center", marginTop: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: borderRadius.lg, backgroundColor: colors.slate100 }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.slate700 }}>
+                  {showAllApprovals ? "Hide approvals" : `Show ${pendingApprovals.length - 2} more approvals`}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </Card>
         </>
       ) : null}

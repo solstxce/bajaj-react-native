@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import {
   HeartPulse, MapPin, TriangleAlert, Stamp, ChevronRight,
-  FileText, Route, ShieldCheck,
+  FileText, Route, ShieldCheck, Search,
 } from "lucide-react-native";
 import { ScreenWrapper } from "../../shared/layout/ScreenWrapper";
 import { SectionHeader } from "../../shared/components/SectionHeader";
@@ -15,6 +15,11 @@ import { useApp } from "../../context/AppContext";
 import { colors, fontSize, spacing, borderRadius } from "../../theme/theme";
 
 export function RmDashboardScreen() {
+  const [expandedCluster, setExpandedCluster] = useState<string | null>(null);
+  const [showAllWatchlist, setShowAllWatchlist] = useState(false);
+  const [showAllDecisions, setShowAllDecisions] = useState(false);
+  const [branchSearch, setBranchSearch] = useState("");
+  const [locationMode, setLocationMode] = useState<"state" | "district">("state");
   const {
     scopedBranches, scopedUsers, scopedTasks, scopedComplaints,
     scopedApprovals, scopedNotifications, scopedAppliances,
@@ -31,6 +36,31 @@ export function RmDashboardScreen() {
   );
   const criticalAlerts = scopedBranches.reduce((s, b) => s + b.criticalAlerts, 0);
   const pendingApprovals = scopedApprovals.filter((a) => a.status === "Pending").length;
+
+  const getDistrict = (branch: typeof scopedBranches[number]) => branch.name || branch.city || "Unknown district";
+  const getState = (branch: typeof scopedBranches[number]) => {
+    const parts = branch.address?.split(",").map((part) => part.trim()).filter(Boolean) || [];
+    return parts[parts.length - 1] || branch.city || "Unknown state";
+  };
+
+  const query = branchSearch.trim().toLowerCase();
+  const searchedBranches = scopedBranches.filter((branch) => {
+    if (!query) return true;
+    return [branch.name, branch.city, branch.address, branch.code, getState(branch), getDistrict(branch)]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query));
+  });
+
+  const locationGroups = searchedBranches.reduce<Record<string, number>>((acc, branch) => {
+    const key = locationMode === "state" ? getState(branch) : getDistrict(branch);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const locationGroupEntries = Object.entries(locationGroups).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+  const criticalBranches = searchedBranches.filter((b) => b.criticalAlerts > 0 || b.health < 80);
+  const monitorBranches = searchedBranches.filter((b) => b.criticalAlerts === 0 && b.health >= 80 && (b.sla < 90 || b.usedBudget / Math.max(b.monthlyBudget, 1) > 0.75));
+  const stableBranches = searchedBranches.filter((b) => b.criticalAlerts === 0 && b.health >= 80 && b.sla >= 90 && b.usedBudget / Math.max(b.monthlyBudget, 1) <= 0.75);
 
   // --- Watchlist items (dynamic from real data) ---
   const watchlistItems = useMemo(() => {
@@ -67,7 +97,7 @@ export function RmDashboardScreen() {
         items.push(`${b.name} health score at ${b.health}% — review needed.`);
       });
 
-    return items.slice(0, 5);
+    return items;
   }, [scopedBranches, scopedComplaints, scopedApprovals]);
 
   // --- Decision feed items (dynamic from real data) ---
@@ -106,8 +136,17 @@ export function RmDashboardScreen() {
         });
       });
 
-    return items.slice(0, 4);
+    return items;
   }, [scopedBranches, scopedComplaints, scopedApprovals]);
+
+  const visibleWatchlist = showAllWatchlist ? watchlistItems : watchlistItems.slice(0, 3);
+  const visibleDecisionFeed = showAllDecisions ? decisionFeedItems : decisionFeedItems.slice(0, 3);
+
+  const branchClusters = [
+    { key: "critical", title: "Critical", subtitle: "Alerts or weak health", branches: criticalBranches, bg: colors.rose50, text: colors.rose700 },
+    { key: "monitor", title: "Monitor", subtitle: "SLA or budget pressure", branches: monitorBranches, bg: colors.amber50, text: colors.amber700 },
+    { key: "stable", title: "Stable", subtitle: "Healthy branches", branches: stableBranches, bg: colors.emerald50, text: colors.emerald700 },
+  ];
 
   return (
     <ScreenWrapper>
@@ -198,68 +237,85 @@ export function RmDashboardScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Branch items */}
-          <View style={{ marginTop: spacing.xl, gap: spacing.lg }}>
-            {scopedBranches.map((branch) => {
-              const budgetPct = Math.round((branch.usedBudget / branch.monthlyBudget) * 100);
-              return (
+          <View style={{ marginTop: spacing.xl }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.slate200, borderRadius: 999, paddingHorizontal: spacing.xl, height: 44 }}>
+              <Search size={16} color={colors.slate400} />
+              <TextInput
+                value={branchSearch}
+                onChangeText={setBranchSearch}
+                placeholder="Search location, district, state or branch code"
+                placeholderTextColor={colors.slate400}
+                style={{ flex: 1, fontSize: fontSize.sm, color: colors.slate900, paddingVertical: 0 }}
+              />
+            </View>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
+              {(["state", "district"] as const).map((mode) => (
                 <TouchableOpacity
-                  key={branch.id}
-                  onPress={() => openBranchDetail(branch.id)}
-                  style={{
-                    backgroundColor: colors.card,
-                    borderRadius: 24,
-                    padding: spacing.xl,
-                    borderWidth: 1,
-                    borderColor: colors.border,
-                  }}
+                  key={mode}
+                  onPress={() => setLocationMode(mode)}
+                  style={{ borderRadius: 999, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: locationMode === mode ? colors.slate900 : colors.white, borderWidth: 1, borderColor: colors.slate200 }}
                 >
-                  {/* Top row: branch info + badges */}
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: spacing.md }}>
-                    <View style={{ flex: 1, minWidth: 180 }}>
-                      <Text style={{ fontSize: fontSize.xs, fontWeight: "600", color: colors.slate400, textTransform: "uppercase", letterSpacing: 2 }}>
-                        {branch.code}
-                      </Text>
-                      <Text style={{ fontSize: fontSize.lg, fontWeight: "700", color: colors.slate900, marginTop: spacing.sm }}>
-                        {branch.name}
-                      </Text>
-                      <Text style={{ fontSize: fontSize.sm, color: colors.slate500, marginTop: spacing.xs }}>
-                        {branch.city} | Revenue index {branch.revenueIndex}
-                      </Text>
-                    </View>
-                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
-                      <Badge
-                        label={`${branch.criticalAlerts} critical`}
-                        type={branch.criticalAlerts > 0 ? "Critical" : "Completed"}
-                      />
-                      <Badge
-                        label={`Audit ${branch.auditScore}`}
-                        type={branch.auditScore < 90 ? "High" : "Completed"}
-                      />
-                    </View>
-                  </View>
-
-                  {/* Metrics row */}
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing["3xl"], marginTop: spacing.xl }}>
-                    <View style={{ minWidth: 60 }}>
-                      <Text style={{ fontSize: fontSize.xs, color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>Health</Text>
-                      <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: colors.slate900, marginTop: spacing.xs }}>{branch.health}%</Text>
-                    </View>
-                    <View style={{ minWidth: 60 }}>
-                      <Text style={{ fontSize: fontSize.xs, color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>Attendance</Text>
-                      <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: colors.slate900, marginTop: spacing.xs }}>{branch.todayAttendance}%</Text>
-                    </View>
-                    <View style={{ minWidth: 60 }}>
-                      <Text style={{ fontSize: fontSize.xs, color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>SLA</Text>
-                      <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: colors.slate900, marginTop: spacing.xs }}>{branch.sla}%</Text>
-                    </View>
-                    <View style={{ minWidth: 60 }}>
-                      <Text style={{ fontSize: fontSize.xs, color: colors.slate400, textTransform: "uppercase", letterSpacing: 1 }}>Budget Used</Text>
-                      <Text style={{ fontSize: fontSize.md, fontWeight: "600", color: budgetPct > 75 ? colors.warning : colors.slate900, marginTop: spacing.xs }}>{budgetPct}%</Text>
-                    </View>
-                    <ChevronRight size={16} color={colors.slate400} style={{ alignSelf: "center" }} />
-                  </View>
+                  <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: locationMode === mode ? colors.white : colors.slate600, textTransform: "capitalize" }}>{mode} wise</Text>
                 </TouchableOpacity>
+              ))}
+            </View>
+            {locationGroupEntries.length > 0 ? (
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.md }}>
+                {locationGroupEntries.map(([name, count]) => (
+                  <View key={name} style={{ borderRadius: 999, backgroundColor: colors.slate50, borderWidth: 1, borderColor: colors.slate200, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }}>
+                    <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.slate600 }}>{name} · {count}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text style={{ marginTop: spacing.md, fontSize: fontSize.sm, color: colors.slate500 }}>No matching locations found.</Text>
+            )}
+          </View>
+
+          {/* Clustered branch groups */}
+          <View style={{ marginTop: spacing.xl, gap: spacing.lg }}>
+            {branchClusters.map((cluster) => {
+              const expanded = expandedCluster === cluster.key;
+              const visibleBranches = expanded ? cluster.branches : cluster.branches.slice(0, 2);
+              return (
+                <View key={cluster.key} style={{ backgroundColor: cluster.bg, borderRadius: 24, padding: spacing.xl }}>
+                  <TouchableOpacity
+                    onPress={() => setExpandedCluster(expanded ? null : cluster.key)}
+                    activeOpacity={0.75}
+                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md }}
+                  >
+                    <View>
+                      <Text style={{ fontSize: fontSize.lg, fontWeight: "800", color: cluster.text }}>{cluster.title}</Text>
+                      <Text style={{ fontSize: fontSize.sm, color: cluster.text, opacity: 0.75, marginTop: spacing.xs }}>{cluster.subtitle}</Text>
+                    </View>
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: fontSize["4xl"], fontWeight: "800", color: cluster.text }}>{cluster.branches.length}</Text>
+                      <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: cluster.text }}>{expanded ? "Hide" : "Open"}</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {visibleBranches.length > 0 ? (
+                    <View style={{ marginTop: spacing.lg, gap: spacing.md }}>
+                      {visibleBranches.map((branch) => {
+                        const budgetPct = Math.round((branch.usedBudget / Math.max(branch.monthlyBudget, 1)) * 100);
+                        return (
+                          <TouchableOpacity key={branch.id} onPress={() => openBranchDetail(branch.id)} style={{ backgroundColor: colors.white, borderRadius: borderRadius["2xl"], padding: spacing.lg }}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: spacing.md }}>
+                              <View style={{ flex: 1 }}>
+                                <Text style={{ fontSize: fontSize.xs, fontWeight: "700", color: colors.slate400, textTransform: "uppercase", letterSpacing: 1.4 }}>{branch.code}</Text>
+                                <Text style={{ marginTop: spacing.xs, fontSize: fontSize.md, fontWeight: "800", color: colors.slate900 }}>{branch.name}</Text>
+                                <Text style={{ marginTop: spacing.xs, fontSize: fontSize.xs, color: colors.slate500 }}>{branch.city} · Health {branch.health}% · SLA {branch.sla}% · Budget {budgetPct}%</Text>
+                              </View>
+                              <ChevronRight size={16} color={colors.slate400} />
+                            </View>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  ) : (
+                    <Text style={{ marginTop: spacing.lg, fontSize: fontSize.sm, color: cluster.text, opacity: 0.75 }}>No branches in this cluster.</Text>
+                  )}
+                </View>
               );
             })}
           </View>
@@ -282,7 +338,7 @@ export function RmDashboardScreen() {
             </Text>
             <View style={{ marginTop: spacing.xl, gap: spacing.md }}>
               {watchlistItems.length > 0 ? (
-                watchlistItems.map((item, idx) => (
+                visibleWatchlist.map((item, idx) => (
                   <View
                     key={idx}
                     style={{
@@ -302,6 +358,13 @@ export function RmDashboardScreen() {
                 </View>
               )}
             </View>
+            {watchlistItems.length > 3 ? (
+              <TouchableOpacity onPress={() => setShowAllWatchlist((value) => !value)} style={{ alignSelf: "center", marginTop: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: borderRadius.lg, backgroundColor: "rgba(255,255,255,0.12)" }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.white }}>
+                  {showAllWatchlist ? "Hide watchlist" : `Show ${watchlistItems.length - 3} more`}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
 
           {/* Decision Feed — glass card */}
@@ -311,7 +374,7 @@ export function RmDashboardScreen() {
             </Text>
             <View style={{ marginTop: spacing.xl, gap: spacing.md }}>
               {decisionFeedItems.length > 0 ? (
-                decisionFeedItems.map((item, idx) => (
+                visibleDecisionFeed.map((item, idx) => (
                   <View
                     key={idx}
                     style={{
@@ -338,6 +401,13 @@ export function RmDashboardScreen() {
                 </View>
               )}
             </View>
+            {decisionFeedItems.length > 3 ? (
+              <TouchableOpacity onPress={() => setShowAllDecisions((value) => !value)} style={{ alignSelf: "center", marginTop: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: borderRadius.lg, backgroundColor: colors.slate100 }}>
+                <Text style={{ fontSize: fontSize.sm, fontWeight: "700", color: colors.slate700 }}>
+                  {showAllDecisions ? "Hide decisions" : `Show ${decisionFeedItems.length - 3} more`}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </Card>
         </View>
 
